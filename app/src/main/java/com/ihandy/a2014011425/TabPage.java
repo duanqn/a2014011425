@@ -8,10 +8,6 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.view.*;
 import android.widget.*;
-import android.app.Activity;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class TabPage extends Fragment{
     int[] imageId = new int[] { R.drawable.img01, R.drawable.img02, R.drawable.img03, R.drawable.img04, R.drawable.img05, R.drawable.img06, R.drawable.img07, R.drawable.img08 }; // 定义并初始化保存图片id的数组
@@ -61,15 +57,10 @@ public class TabPage extends Fragment{
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         long t = System.currentTimeMillis();
-        String addr = "http://assignment.crazz.cn/news/en/category?timestamp=" + t;
-        try{
-            URL server = new URL(addr);
-        }
-        catch(MalformedURLException e){
-            System.out.println(e);
-        }
-        //TODO
+
         View view = inflater.inflate(R.layout.page_tab, container, false);
+        TextView textView = (TextView) view.findViewById(R.id.textView);
+        textView.setText("This is not a tab layout\nThis is controlled by me");
         ListView listview = (ListView) view.findViewById(R.id.listview1);
         MyAdapter adp = new MyAdapter(getActivity());
         listview.setAdapter(adp);

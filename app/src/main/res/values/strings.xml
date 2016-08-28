@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">a2014011425</string>
+    <string name="app_name">News Center</string>
+    <string name="server_address">http://assignment.crazz.cn/news/en/category</string>
 </resources>
