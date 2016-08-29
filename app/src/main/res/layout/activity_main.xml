@@ -6,11 +6,19 @@
     android:layout_height="match_parent"
     tools:context="com.ihandy.a2014011425.MainActivity">
 
+    <com.ihandy.a2014011425.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:id="@+id/mytitle">
+    </com.ihandy.a2014011425.TitleBar>
+
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabMode="scrollable"
+        android:layout_below="@id/mytitle"
         android:background="@color/colorPrimary"/>
 
     <android.support.v4.view.ViewPager
@@ -20,4 +28,5 @@
         android:layout_below="@+id/tabs">
 
     </android.support.v4.view.ViewPager>
+
 </RelativeLayout>
