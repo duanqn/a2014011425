@@ -64,8 +64,9 @@ public class AboutActivity extends AppCompatActivity
                 URL url;
                 URLConnection con;
                 String res = null;
+                String tar = R.string.server_address + "?timestamp=111111111";
                 try{
-                    url = new URL(R.string.server_address+"?timestamp=111111111");
+                    url = new URL(tar);
                     con = url.openConnection();
                     InputStream webin = con.getInputStream();
                     BufferedReader read = new BufferedReader(new InputStreamReader(webin));

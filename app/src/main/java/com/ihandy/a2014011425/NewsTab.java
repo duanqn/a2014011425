@@ -4,6 +4,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -57,5 +63,44 @@ public class NewsTab {
     }
     public int getTitleNum(){
         return titleList.size();
+    }
+    public static String getResponse(){
+        long mills = System.currentTimeMillis();
+        String url = "http://assignment.crazz.cn/news/en/category" + "?timestamp=" + mills;
+        System.out.println("Getting response from " + url);
+        String res = "";
+        InputStreamReader adp = null;
+        BufferedReader in = null;
+        URLConnection urlConn = null;
+        try{
+            URL tar = new URL(url);
+            if(tar != null){
+                urlConn = tar.openConnection();
+                urlConn.setConnectTimeout(3000);
+                adp = new InputStreamReader(urlConn.getInputStream());
+                in = new BufferedReader(adp);
+                String line = null;
+                while((line = in.readLine())!=null){
+                    res += line+"\n";
+                }
+            }
+        }
+        catch(MalformedURLException e){
+            System.out.println(e);
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+        finally {
+            if(in != null){
+                try{
+                    in.close();
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return res;
     }
 }
