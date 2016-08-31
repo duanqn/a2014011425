@@ -37,14 +37,6 @@ public class NewsTab {
         }
     }
     NewsTab(){
-        String t = "{\"data\": {\"categories\": {     \"business\": \"Business\",      \"entertainment\": \"Entertainment\",      \"health\": \"Health\",      \"more top stories\": \"More Top Stories\",      \"national\": \"India\",      \"science\": \"Science\",      \"sports\": \"Sports\",      \"technology\": \"Technology\",      \"top_stories\": \"Top Stories\",      \"world\": \"World\"    },    \"locale\": \"en_in\"  },  \"meta\": {    \"code\": 200  }}";
-        JSONTokener token = new JSONTokener(t);
-        try{
-            obj = (JSONObject)token.nextValue();
-        }
-        catch(JSONException e){
-
-        }
     }
     public ArrayList<String> getTitle(){
         return titleList;
@@ -64,7 +56,7 @@ public class NewsTab {
     public int getTitleNum(){
         return titleList.size();
     }
-    public static String getResponse(){
+    public String getResponse(){
         long mills = System.currentTimeMillis();
         String url = "http://assignment.crazz.cn/news/en/category" + "?timestamp=" + mills;
         System.out.println("Getting response from " + url);
@@ -100,6 +92,12 @@ public class NewsTab {
                     e.printStackTrace();
                 }
             }
+        }
+        try{
+            obj = new JSONObject(res);
+        }
+        catch(JSONException j){
+            System.out.println(j);
         }
         return res;
     }
