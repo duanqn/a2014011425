@@ -17,22 +17,20 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private TextView port;
-    Handler handler;
-    final int NEWS_TAB_UPDATE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        */
 
+        /*
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg){
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         thread.start();
-
+        */
 
         Button use = (Button)findViewById(R.id.option);
         use.setOnClickListener(new Button.OnClickListener() {
