@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
         */
 
-        Button use = (Button)findViewById(R.id.option);
+        Button use = (Button)findViewById(R.id.next);
         use.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v){
