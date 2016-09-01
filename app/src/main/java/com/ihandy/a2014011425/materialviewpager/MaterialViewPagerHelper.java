@@ -9,6 +9,7 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ObservableWebView;
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MaterialViewPagerHelper {
 
-    private static ConcurrentHashMap<Object, MaterialViewPagerAnimator> hashMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Object, com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator> hashMap = new ConcurrentHashMap<>();
 
     /**
      * Register an MaterialViewPagerAnimator attached to an activity into the ConcurrentHashMap
@@ -32,7 +33,7 @@ public class MaterialViewPagerHelper {
      * @param context  the context
      * @param animator the current MaterialViewPagerAnimator
      */
-    public static void register(Context context, MaterialViewPagerAnimator animator) {
+    public static void register(Context context, com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator animator) {
         hashMap.put(context, animator);
     }
 
@@ -53,7 +54,7 @@ public class MaterialViewPagerHelper {
      */
     public static void registerRecyclerView(Context context, RecyclerView recyclerView) {
         if (context != null && hashMap.containsKey(context)) {
-            MaterialViewPagerAnimator animator = hashMap.get(context);
+            com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator animator = hashMap.get(context);
             if (animator != null) {
                 animator.registerRecyclerView(recyclerView);
             }
@@ -72,7 +73,7 @@ public class MaterialViewPagerHelper {
     @Deprecated
     public static void registerWebView(Activity activity, ObservableWebView webView, ObservableScrollViewCallbacks observableScrollViewCallbacks) {
         if (activity != null && hashMap.containsKey(activity)) {
-            MaterialViewPagerAnimator animator = hashMap.get(activity);
+            com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator animator = hashMap.get(activity);
             if (animator != null) {
                 animator.registerWebView(webView, observableScrollViewCallbacks);
             }
@@ -90,7 +91,7 @@ public class MaterialViewPagerHelper {
      */
     public static void registerScrollView(Activity activity, ObservableScrollView mScrollView, ObservableScrollViewCallbacks observableScrollViewCallbacks) {
         if (activity != null && hashMap.containsKey(activity)) {
-            MaterialViewPagerAnimator animator = hashMap.get(activity);
+            com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator animator = hashMap.get(activity);
             if (animator != null) {
                 animator.registerScrollView(mScrollView, observableScrollViewCallbacks);
             }
@@ -103,7 +104,7 @@ public class MaterialViewPagerHelper {
      * @param context the context
      * @return current MaterialViewPagerAnimator
      */
-    public static MaterialViewPagerAnimator getAnimator(Context context) {
+    public static com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator getAnimator(Context context) {
         return hashMap.get(context);
     }
 
@@ -122,7 +123,7 @@ public class MaterialViewPagerHelper {
     public static void injectHeader(final WebView webView, boolean withAnimation) {
         if (webView != null) {
 
-            MaterialViewPagerAnimator animator = MaterialViewPagerHelper.getAnimator(webView.getContext());
+            MaterialViewPagerAnimator animator = com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHelper.getAnimator(webView.getContext());
             if (animator != null) {
 
                 WebSettings webSettings = webView.getSettings();

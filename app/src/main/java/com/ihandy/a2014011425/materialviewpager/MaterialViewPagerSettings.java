@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 
 import static com.ihandy.a2014011425.materialviewpager.Utils.pxToDp;
-import com.ihandy.a2014011425.R;
 
 /**
  * Created by florentchampigny on 29/04/15.
@@ -19,13 +18,13 @@ public class MaterialViewPagerSettings implements Parcelable {
     //attributes are protected and can be used by class from the same package
     //com.ihandy.a2014011425.materialviewpager
 
-    public static final Creator<MaterialViewPagerSettings> CREATOR = new Creator<MaterialViewPagerSettings>() {
-        public MaterialViewPagerSettings createFromParcel(Parcel source) {
-            return new MaterialViewPagerSettings(source);
+    public static final Creator<com.ihandy.a2014011425.materialviewpager.MaterialViewPagerSettings> CREATOR = new Creator<com.ihandy.a2014011425.materialviewpager.MaterialViewPagerSettings>() {
+        public com.ihandy.a2014011425.materialviewpager.MaterialViewPagerSettings createFromParcel(Parcel source) {
+            return new com.ihandy.a2014011425.materialviewpager.MaterialViewPagerSettings(source);
         }
 
-        public MaterialViewPagerSettings[] newArray(int size) {
-            return new MaterialViewPagerSettings[size];
+        public com.ihandy.a2014011425.materialviewpager.MaterialViewPagerSettings[] newArray(int size) {
+            return new com.ihandy.a2014011425.materialviewpager.MaterialViewPagerSettings[size];
         }
     };
     protected int headerLayoutId;
@@ -103,61 +102,61 @@ public class MaterialViewPagerSettings implements Parcelable {
      */
     protected void handleAttributes(Context context, AttributeSet attrs) {
         try {
-            TypedArray styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.MaterialViewPager);
+            TypedArray styledAttrs = context.obtainStyledAttributes(attrs, com.ihandy.a2014011425.R.styleable.MaterialViewPager);
             {
-                headerLayoutId = styledAttrs.getResourceId(R.styleable.MaterialViewPager_viewpager_header, -1);
+                headerLayoutId = styledAttrs.getResourceId(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_header, -1);
             }
             {
-                pagerTitleStripId = styledAttrs.getResourceId(R.styleable.MaterialViewPager_viewpager_pagerTitleStrip, -1);
+                pagerTitleStripId = styledAttrs.getResourceId(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_pagerTitleStrip, -1);
                 if (pagerTitleStripId == -1) {
-                    pagerTitleStripId = R.layout.material_view_pager_pagertitlestrip_standard;
+                    pagerTitleStripId = com.ihandy.a2014011425.R.layout.material_view_pager_pagertitlestrip_standard;
                 }
             }
             {
-                viewpagerId = styledAttrs.getResourceId(R.styleable.MaterialViewPager_viewpager_viewpager, -1);
+                viewpagerId = styledAttrs.getResourceId(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_viewpager, -1);
             }
             {
-                logoLayoutId = styledAttrs.getResourceId(R.styleable.MaterialViewPager_viewpager_logo, -1);
-                logoMarginTop = styledAttrs.getDimensionPixelSize(R.styleable.MaterialViewPager_viewpager_logoMarginTop, 0);
+                logoLayoutId = styledAttrs.getResourceId(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_logo, -1);
+                logoMarginTop = styledAttrs.getDimensionPixelSize(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_logoMarginTop, 0);
             }
             {
-                color = styledAttrs.getColor(R.styleable.MaterialViewPager_viewpager_color, 0);
+                color = styledAttrs.getColor(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_color, 0);
             }
             {
-                headerHeightPx = styledAttrs.getDimensionPixelOffset(R.styleable.MaterialViewPager_viewpager_headerHeight, 200);
+                headerHeightPx = styledAttrs.getDimensionPixelOffset(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_headerHeight, 200);
                 headerHeight = Math.round(pxToDp(headerHeightPx, context)); //convert to dp
             }
             {
-                headerAdditionalHeight = styledAttrs.getDimensionPixelOffset(R.styleable.MaterialViewPager_viewpager_headerAdditionalHeight, 60);
+                headerAdditionalHeight = styledAttrs.getDimensionPixelOffset(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_headerAdditionalHeight, 60);
             }
             {
-                headerAlpha = styledAttrs.getFloat(R.styleable.MaterialViewPager_viewpager_headerAlpha, 0.5f);
+                headerAlpha = styledAttrs.getFloat(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_headerAlpha, 0.5f);
             }
             {
-                imageHeaderDarkLayerAlpha = styledAttrs.getFloat(R.styleable.MaterialViewPager_viewpager_imageHeaderDarkLayerAlpha, 0.0f);
+                imageHeaderDarkLayerAlpha = styledAttrs.getFloat(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_imageHeaderDarkLayerAlpha, 0.0f);
             }
             {
-                parallaxHeaderFactor = styledAttrs.getFloat(R.styleable.MaterialViewPager_viewpager_parallaxHeaderFactor, 1.5f);
+                parallaxHeaderFactor = styledAttrs.getFloat(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_parallaxHeaderFactor, 1.5f);
                 parallaxHeaderFactor = Math.max(parallaxHeaderFactor, 1); //min=1
             }
             {
-                hideToolbarAndTitle = styledAttrs.getBoolean(R.styleable.MaterialViewPager_viewpager_hideToolbarAndTitle, false);
-                hideLogoWithFade = styledAttrs.getBoolean(R.styleable.MaterialViewPager_viewpager_hideLogoWithFade, false);
+                hideToolbarAndTitle = styledAttrs.getBoolean(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_hideToolbarAndTitle, false);
+                hideLogoWithFade = styledAttrs.getBoolean(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_hideLogoWithFade, false);
             }
             {
-                enableToolbarElevation = styledAttrs.getBoolean(R.styleable.MaterialViewPager_viewpager_enableToolbarElevation, false);
+                enableToolbarElevation = styledAttrs.getBoolean(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_enableToolbarElevation, false);
             }
             {
-                displayToolbarWhenSwipe = styledAttrs.getBoolean(R.styleable.MaterialViewPager_viewpager_displayToolbarWhenSwipe, false);
+                displayToolbarWhenSwipe = styledAttrs.getBoolean(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_displayToolbarWhenSwipe, false);
             }
             {
-                toolbarTransparent = styledAttrs.getBoolean(R.styleable.MaterialViewPager_viewpager_transparentToolbar, false);
+                toolbarTransparent = styledAttrs.getBoolean(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_transparentToolbar, false);
             }
             {
-                animatedHeaderImage = styledAttrs.getBoolean(R.styleable.MaterialViewPager_viewpager_animatedHeaderImage, true);
+                animatedHeaderImage = styledAttrs.getBoolean(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_animatedHeaderImage, true);
             }
             {
-                disableToolbar = styledAttrs.getBoolean(R.styleable.MaterialViewPager_viewpager_disableToolbar, false);
+                disableToolbar = styledAttrs.getBoolean(com.ihandy.a2014011425.R.styleable.MaterialViewPager_viewpager_disableToolbar, false);
             }
             styledAttrs.recycle();
         } catch (Exception e) {

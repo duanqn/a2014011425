@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ihandy.a2014011425.fragment.RecyclerViewFragment;
+
 import java.util.ArrayList;
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     final int NEWS_TAB_UPDATE = 1;
@@ -50,7 +52,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     //获取显示页的Fragment
     @Override
     public Fragment getItem(int position) {
-        return new TabPage();
+        return RecyclerViewFragment.newInstance();
     }
 
     // page个数设置

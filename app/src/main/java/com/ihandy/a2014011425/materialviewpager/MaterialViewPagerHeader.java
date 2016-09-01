@@ -44,15 +44,15 @@ public class MaterialViewPagerHeader {
         this.toolbarLayout = (View) toolbar.getParent();
     }
 
-    public static MaterialViewPagerHeader withToolbar(Toolbar toolbar) {
-        return new MaterialViewPagerHeader(toolbar);
+    public static com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader withToolbar(Toolbar toolbar) {
+        return new com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader(toolbar);
     }
 
     public Context getContext() {
         return context;
     }
 
-    public MaterialViewPagerHeader withPagerSlidingTabStrip(View pagerSlidingTabStrip) {
+    public com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader withPagerSlidingTabStrip(View pagerSlidingTabStrip) {
         this.mPagerSlidingTabStrip = pagerSlidingTabStrip;
 
         mPagerSlidingTabStrip.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -68,17 +68,17 @@ public class MaterialViewPagerHeader {
         return this;
     }
 
-    public MaterialViewPagerHeader withHeaderBackground(View headerBackground) {
+    public com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader withHeaderBackground(View headerBackground) {
         this.headerBackground = headerBackground;
         return this;
     }
 
-    public MaterialViewPagerHeader withStatusBackground(View statusBackground) {
+    public com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader withStatusBackground(View statusBackground) {
         this.statusBackground = statusBackground;
         return this;
     }
 
-    public MaterialViewPagerHeader withToolbarLayoutBackground(View toolbarLayoutBackground) {
+    public com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader withToolbarLayoutBackground(View toolbarLayoutBackground) {
         this.toolbarLayoutBackground = toolbarLayoutBackground;
         return this;
     }
@@ -92,7 +92,7 @@ public class MaterialViewPagerHeader {
         return result;
     }
 
-    public MaterialViewPagerHeader withLogo(View logo) {
+    public com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader withLogo(View logo) {
         this.mLogo = logo;
 
         //when logo get a height, initialise initial & final logo positions

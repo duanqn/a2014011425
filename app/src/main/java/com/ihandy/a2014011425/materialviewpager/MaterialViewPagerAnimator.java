@@ -10,6 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPager;
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader;
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerSettings;
+import com.ihandy.a2014011425.materialviewpager.Utils;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ObservableWebView;
@@ -47,7 +51,7 @@ import static com.ihandy.a2014011425.materialviewpager.Utils.setScale;
  */
 public class MaterialViewPagerAnimator {
 
-    private static final String TAG = MaterialViewPagerAnimator.class.getSimpleName();
+    private static final String TAG = com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator.class.getSimpleName();
     //duration of translate header enter animation
     private static final int ENTER_TOOLBAR_ANIMATION_DURATION = 600;
     public static Boolean ENABLE_LOG = true;
@@ -104,7 +108,9 @@ public class MaterialViewPagerAnimator {
      * @param yOffset the scroller current yOffset
      */
     public boolean onMaterialScrolled(Object source, float yOffset) {
-
+        if (ENABLE_LOG) {
+            Log.d("OnScrolled", "");
+        }
         if (initialDistance == -1 || initialDistance == 0) {
             initialDistance = mHeader.mPagerSlidingTabStrip.getTop() - mHeader.toolbar.getBottom();
         }

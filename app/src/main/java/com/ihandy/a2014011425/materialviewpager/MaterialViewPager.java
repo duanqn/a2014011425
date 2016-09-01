@@ -19,9 +19,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator;
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader;
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHelper;
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerSettings;
+import com.ihandy.a2014011425.materialviewpager.Utils;
 import com.ihandy.a2014011425.materialviewpager.header.HeaderDesign;
 import com.ihandy.a2014011425.materialviewpager.header.MaterialViewPagerImageHelper;
-import com.ihandy.a2014011425.R;
 
 /**
  * Created by florentchampigny on 28/04/15.
@@ -36,7 +40,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
     /**
      * Contains all references to MatervialViewPager's header views
      */
-    protected MaterialViewPagerHeader materialViewPagerHeader;
+    protected com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHeader materialViewPagerHeader;
     //the child toolbar
     protected Toolbar mToolbar;
     //the child viewpager
@@ -47,7 +51,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
     protected View toolbarLayoutBackground;
     //Class containing the configuration of the MaterialViewPager
     protected MaterialViewPagerSettings settings = new MaterialViewPagerSettings();
-    protected MaterialViewPager.Listener listener;
+    protected com.ihandy.a2014011425.materialviewpager.MaterialViewPager.Listener listener;
     int lastPosition = -1;
     int currentPagerState = Integer.MIN_VALUE;
     /**
@@ -143,7 +147,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
      * @return the displayed tabs
      */
     public PagerSlidingTabStrip getPagerTitleStrip() {
-        return (PagerSlidingTabStrip) pagerTitleStripContainer.findViewById(R.id.materialviewpager_pagerTitleStrip);
+        return (PagerSlidingTabStrip) pagerTitleStripContainer.findViewById(com.ihandy.a2014011425.R.id.materialviewpager_pagerTitleStrip);
     }
 
     /**
@@ -168,7 +172,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
      */
     public void setImageUrl(String imageUrl, int fadeDuration) {
         if (imageUrl != null) {
-            final ImageView headerBackgroundImage = (ImageView) findViewById(R.id.materialviewpager_imageHeader);
+            final ImageView headerBackgroundImage = (ImageView) findViewById(com.ihandy.a2014011425.R.id.materialviewpager_imageHeader);
             //if using MaterialViewPagerImageHeader
             if (headerBackgroundImage != null) {
                 ViewCompat.setAlpha(headerBackgroundImage, settings.headerAlpha);
@@ -195,7 +199,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
      */
     public void setImageDrawable(Drawable drawable, int fadeDuration) {
         if (drawable != null) {
-            final ImageView headerBackgroundImage = (ImageView) findViewById(R.id.materialviewpager_imageHeader);
+            final ImageView headerBackgroundImage = (ImageView) findViewById(com.ihandy.a2014011425.R.id.materialviewpager_imageHeader);
             //if using MaterialViewPagerImageHeader
             if (headerBackgroundImage != null) {
                 ViewCompat.setAlpha(headerBackgroundImage, settings.headerAlpha);
@@ -209,7 +213,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
      * Change alpha of the header image dark layer to reveal text.
      */
     public void setImageHeaderDarkLayerAlpha() {
-        final View headerImageDarkLayerView = findViewById(R.id.materialviewpager_headerImageDarkLayer);
+        final View headerImageDarkLayerView = findViewById(com.ihandy.a2014011425.R.id.materialviewpager_headerImageDarkLayer);
         //if using MaterialViewPagerImageHeader
         if (headerImageDarkLayerView != null) {
             headerImageDarkLayerView.setBackgroundColor(getResources().getColor(android.R.color.black));
@@ -303,14 +307,14 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
         super.onFinishInflate();
 
         //add @layout/material_view_pager_layout as child, containing all the MaterialViewPager views
-        addView(LayoutInflater.from(getContext()).inflate(R.layout.material_view_pager_layout, this, false));
+        addView(LayoutInflater.from(getContext()).inflate(com.ihandy.a2014011425.R.layout.material_view_pager_layout, this, false));
 
-        headerBackgroundContainer = (ViewGroup) findViewById(R.id.headerBackgroundContainer);
-        pagerTitleStripContainer = (ViewGroup) findViewById(R.id.pagerTitleStripContainer);
-        viewpagerContainer = (ViewGroup) findViewById(R.id.viewpager_layout);
-        logoContainer = (ViewGroup) findViewById(R.id.logoContainer);
+        headerBackgroundContainer = (ViewGroup) findViewById(com.ihandy.a2014011425.R.id.headerBackgroundContainer);
+        pagerTitleStripContainer = (ViewGroup) findViewById(com.ihandy.a2014011425.R.id.pagerTitleStripContainer);
+        viewpagerContainer = (ViewGroup) findViewById(com.ihandy.a2014011425.R.id.viewpager_layout);
+        logoContainer = (ViewGroup) findViewById(com.ihandy.a2014011425.R.id.logoContainer);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(com.ihandy.a2014011425.R.id.toolbar);
         if (settings.disableToolbar) {
             mToolbar.setVisibility(INVISIBLE);
         }
@@ -323,7 +327,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
             }
         }
 
-        mViewPager = (ViewPager) findViewById(R.id.materialviewpager_viewpager);
+        mViewPager = (ViewPager) findViewById(com.ihandy.a2014011425.R.id.materialviewpager_viewpager);
 
         mViewPager.addOnPageChangeListener(this);
 
@@ -333,9 +337,9 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
             int headerId = settings.headerLayoutId;
             if (headerId == -1) {
                 if (settings.animatedHeaderImage) {
-                    headerId = R.layout.material_view_pager_moving_header;
+                    headerId = com.ihandy.a2014011425.R.layout.material_view_pager_moving_header;
                 } else {
-                    headerId = R.layout.material_view_pager_imageview_header;
+                    headerId = com.ihandy.a2014011425.R.layout.material_view_pager_imageview_header;
                 }
             }
             headerBackgroundContainer.addView(LayoutInflater.from(getContext()).inflate(headerId, headerBackgroundContainer, false));
@@ -343,7 +347,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
 
         if (isInEditMode()) { //preview titlestrip
             //add fake tabs on edit mode
-            settings.pagerTitleStripId = R.layout.tools_material_view_pager_pagertitlestrip;
+            settings.pagerTitleStripId = com.ihandy.a2014011425.R.layout.tools_material_view_pager_pagertitlestrip;
         }
         if (settings.pagerTitleStripId != -1) {
             pagerTitleStripContainer.addView(LayoutInflater.from(getContext()).inflate(settings.pagerTitleStripId, pagerTitleStripContainer, false));
@@ -358,8 +362,8 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
             }
         }
 
-        headerBackground = findViewById(R.id.headerBackground);
-        toolbarLayoutBackground = findViewById(R.id.toolbar_layout_background);
+        headerBackground = findViewById(com.ihandy.a2014011425.R.id.headerBackground);
+        toolbarLayoutBackground = findViewById(com.ihandy.a2014011425.R.id.toolbar_layout_background);
 
         initialiseHeights();
 
@@ -370,7 +374,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
                 .withToolbarLayoutBackground(toolbarLayoutBackground)
                 .withPagerSlidingTabStrip(pagerTitleStripContainer)
                 .withHeaderBackground(headerBackground)
-                .withStatusBackground(findViewById(R.id.statusBackground))
+                .withStatusBackground(findViewById(com.ihandy.a2014011425.R.id.statusBackground))
                 .withLogo(logoContainer);
 
             //and construct the MaterialViewPagerAnimator
@@ -379,7 +383,7 @@ public class MaterialViewPager extends FrameLayout implements ViewPager.OnPageCh
         } else {
 
             //if in edit mode, add fake cardsviews
-            View sample = LayoutInflater.from(getContext()).inflate(R.layout.tools_list_items, pagerTitleStripContainer, false);
+            View sample = LayoutInflater.from(getContext()).inflate(com.ihandy.a2014011425.R.layout.tools_list_items, pagerTitleStripContainer, false);
 
             LayoutParams params = (LayoutParams) sample.getLayoutParams();
             int marginTop = Math.round(Utils.dpToPx(settings.headerHeight + 10, getContext()));

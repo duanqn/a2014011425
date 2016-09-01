@@ -8,6 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerAnimator;
+import com.ihandy.a2014011425.materialviewpager.MaterialViewPagerHelper;
+import com.ihandy.a2014011425.materialviewpager.Utils;
+
 /**
  * Created by florentchampigny on 26/04/15.
  * A placeholder view used to add a transparent padding on top of a Scroller
