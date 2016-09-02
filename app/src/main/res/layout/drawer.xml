@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<View xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/left_drawer"
-    android:layout_width="320dp"
+<android.support.design.widget.NavigationView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_view"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="@android:color/white"
-     >
-</View>
+    android:fitsSystemWindows="true"
+    android:background="@color/purple"
+    app:headerLayout="@layout/nav_header_about"
+    app:menu="@menu/activity_about_drawer" />

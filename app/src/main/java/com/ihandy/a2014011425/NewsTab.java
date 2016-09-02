@@ -20,7 +20,7 @@ public class NewsTab {
     private ArrayList<String> titleList = new ArrayList<>();
     private ArrayList<String> codedTitleList = new ArrayList<>();
     private JSONObject obj;
-    public synchronized void parseTab(){
+    public void parseTab(){
         String key, value;
         try{
             obj = obj.getJSONObject("data");
@@ -94,6 +94,7 @@ public class NewsTab {
             }
         }
         try{
+            System.out.println("Assigning values!");
             obj = new JSONObject(res);
         }
         catch(JSONException j){

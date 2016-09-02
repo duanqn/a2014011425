@@ -28,7 +28,7 @@ public class MainActivity extends DrawerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setTitle("Test");
+        setTitle("");   //No title
 
         mViewPager = (MaterialViewPager)findViewById(R.id.materialViewPager);
         toolbar = mViewPager.getToolbar();
@@ -81,7 +81,7 @@ public class MainActivity extends DrawerActivity {
             logo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mViewPager.notifyHeaderChanged();
+                    //mViewPager.notifyHeaderChanged();
                     Toast.makeText(getApplicationContext(), "Yes, the title is clickable", Toast.LENGTH_SHORT).show();
                 }
             });
