@@ -19,12 +19,12 @@ import java.util.List;
  */
 public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    List<Object> contents;
+    List<NewsContent> contents;
 
     static final int TYPE_HEADER = 0;
     static final int TYPE_CELL = 1;
 
-    public TestRecyclerViewAdapter(List<Object> contents) {
+    public TestRecyclerViewAdapter(List<NewsContent> contents) {
         this.contents = contents;
     }
 
@@ -33,8 +33,11 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     //TODO: notice!
     public int getItemViewType(int position) {
         switch (position) {
+            /*
             case 0:
                 return TYPE_HEADER;
+                */
+            //We don't use TYPE_HEADER
             default:
                 return TYPE_CELL;
         }
@@ -76,8 +79,8 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                 break;
             case TYPE_CELL:
                 cholder = (CardViewHolder)holder;
-                cholder.title.setText("0xDEADBEEF");
-                cholder.detail.setText("Millions of tons of dead beef has been sold to USA.\nMcDonald's reported to serve deadbeef.");
+                cholder.title.setText(contents.get(position).title);
+                cholder.detail.setText(""+contents.get(position).newsid);
                 break;
         }
     }

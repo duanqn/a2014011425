@@ -20,6 +20,7 @@ public class NewsTab {
     private ArrayList<String> titleList = new ArrayList<>();
     private ArrayList<String> codedTitleList = new ArrayList<>();
     private JSONObject obj;
+    public boolean tabReady;
     public void parseTab(){
         String key, value;
         try{
@@ -32,11 +33,13 @@ public class NewsTab {
                 titleList.add(value);
                 codedTitleList.add(key);
             }
+            tabReady = true;
         }catch(JSONException e){
             System.out.println(e);
         }
     }
     NewsTab(){
+        tabReady = false;
     }
     public ArrayList<String> getTitle(){
         return titleList;
@@ -48,6 +51,15 @@ public class NewsTab {
         String res = null;
         try{
             res = titleList.get(pos);
+        }catch(ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+    public String codedTitleAt(int pos){
+        String res = null;
+        try{
+            res = codedTitleList.get(pos);
         }catch(ArrayIndexOutOfBoundsException e){
             e.printStackTrace();
         }
@@ -94,7 +106,7 @@ public class NewsTab {
             }
         }
         try{
-            System.out.println("Assigning values!");
+            System.out.println("Assigning values! "+res);
             obj = new JSONObject(res);
         }
         catch(JSONException j){

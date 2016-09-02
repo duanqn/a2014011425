@@ -52,7 +52,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     //获取显示页的Fragment
     @Override
     public Fragment getItem(int position) {
-        return RecyclerViewFragment.newInstance();
+        return RecyclerViewFragment.newInstance(tabs, position);
     }
 
     // page个数设置
