@@ -114,6 +114,11 @@ public class RecyclerViewFragment extends Fragment {
                             content.title = news.getString("title");
                             content.category = news.getString("category");
                             content.newsid = news.getLong("news_id");
+                            if(news.getJSONArray("imgs").length() > 0){
+                                content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
+                            }
+                            content.origin = news.getString("origin");
+                            content.urlstr = news.getJSONObject("source").getString("url");
                             mContentItems.add(content);
                         }
                         mhandler.sendEmptyMessage(0);

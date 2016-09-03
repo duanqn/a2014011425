@@ -12,6 +12,7 @@ public class NewsContent {
     public String imageurl = null;
     public long newsid;
     public String category;
+    public String origin;
     public NewsContent(){
         title = "一切反动派都是纸老虎";
         urlstr = "";
