@@ -18,16 +18,21 @@ import java.util.ArrayList;
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     final int NEWS_TAB_UPDATE = 1;
     private NewsTab tabs;
+    private ArrayList<RecyclerViewFragment> fragments;
     Handler handler;
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
+        fragments = new ArrayList<>();
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg){
                 switch(msg.what){
                     case NEWS_TAB_UPDATE:
                         tabs = (NewsTab) msg.obj;
+                        for(int i = 0; i < tabs.getTitleNum(); ++i){
+                            fragments.add(RecyclerViewFragment.newInstance(tabs, i));
+                        }
                         ViewPagerAdapter.this.notifyDataSetChanged();
                         break;
                     default:
@@ -52,7 +57,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     //获取显示页的Fragment
     @Override
     public Fragment getItem(int position) {
-        return RecyclerViewFragment.newInstance(tabs, position);
+        return fragments.get(position);
     }
 
     // page个数设置

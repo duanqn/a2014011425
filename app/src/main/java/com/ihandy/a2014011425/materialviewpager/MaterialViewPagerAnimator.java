@@ -495,7 +495,8 @@ public class MaterialViewPagerAnimator {
     }
 
     public void onViewPagerPageChanged() {
-        scrollDown(lastYOffset);
+        //TODO: He tries to roll ONLY horizontally, but I find it not good enough. So I'm changing that (by commenting out the next sentence).
+        //scrollDown(lastYOffset);
 
         View visibleView = getTheVisibileView(scrollViewList);
         if (!canScroll(visibleView)) {

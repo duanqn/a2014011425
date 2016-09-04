@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -51,6 +52,128 @@ public class RecyclerViewFragment extends Fragment {
     private Handler mhandler;
     private int lastVisibleItem;
 
+    class WebThread implements Runnable{
+        int max_news_id;
+        public static final int NEWEST = -1;
+        public WebThread(int max_id){
+            max_news_id = max_id;
+        }
+        public void run(){
+            while(!tabInfo.tabReady){
+                try{
+                    Thread.sleep(50);
+                }catch(InterruptedException e){}
+            }
+            JSONObject obj = getResponse();
+            JSONArray newsList;
+            JSONObject news;
+            NewsContent content;
+            if(obj == null){
+                System.out.println("No object returned!");
+            }
+            else {
+                if(!obj.has("data")){
+                    if(mContentItems.isEmpty()) {
+                        content = new NewsContent();
+                        content.title = "根据相关法律法规和政策,部分结果未予显示";
+                        content.urlstr = "about:blank";
+                        content.category = "default";
+                        content.newsid = 0;
+                        content.origin = "";
+                        content.imageurl = null;
+                        mContentItems.add(content);
+                        mhandler.sendEmptyMessage(0);   //no result
+                    }
+                }
+                else {
+                    try {
+                        obj = obj.getJSONObject("data");
+                        newsList = obj.getJSONArray("news");
+                        for (int i = 0; i < newsList.length(); ++i) {
+                            news = newsList.getJSONObject(i);
+                            content = new NewsContent();
+                            content.title = news.getString("title");
+                            content.category = news.getString("category");
+                            content.newsid = news.getLong("news_id");
+                            if (news.getJSONArray("imgs").length() > 0) {
+                                content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
+                            }
+                            content.origin = news.getString("origin");
+                            content.urlstr = news.getJSONObject("source").getString("url");
+                            boolean crash = false;
+                            //TODO: Insertion Sort
+                            int j;
+                            for(j = 0; j < mContentItems.size(); ++j){
+                                if(mContentItems.get(j).newsid == content.newsid){
+                                    crash = true;
+                                    break;
+                                }
+                                else if(mContentItems.get(j).newsid < content.newsid){
+                                    crash = false;
+                                    break;
+                                }
+                            }
+                            if(!crash)
+                                mContentItems.add(j, content);
+                        }
+                        mhandler.sendEmptyMessage(0);
+                    } catch (JSONException e) {
+                        System.out.println(e);
+                    }
+                }
+            }
+        }
+        public JSONObject getResponse(){
+            String tab_code = tabInfo.codedTitleAt(tab_order);
+            String url = "http://assignment.crazz.cn/news/query?locale=en&category=" + tab_code;
+            if(max_news_id != NEWEST){
+                url+="&max_news_id="+max_news_id;
+            }
+            System.out.println("Getting response for " + tab_code);
+            String res = "";
+            InputStreamReader adp = null;
+            BufferedReader in = null;
+            URLConnection urlConn = null;
+            try{
+                URL tar = new URL(url);
+                if(tar != null){
+                    urlConn = tar.openConnection();
+                    urlConn.setConnectTimeout(3000);
+                    adp = new InputStreamReader(urlConn.getInputStream());
+                    in = new BufferedReader(adp);
+                    String line = null;
+                    while((line = in.readLine())!=null){
+                        res += line+"\n";
+                    }
+                }
+            }
+            catch(MalformedURLException e){
+                System.out.println(e);
+            }
+            catch(IOException e){
+                System.out.println(e);
+            }
+            finally {
+                if(in != null){
+                    try{
+                        in.close();
+                    }
+                    catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            JSONObject json = null;
+            try{
+                System.out.println("Assigning values!");
+                json = new JSONObject(res);
+            }
+            catch(JSONException j){
+                System.out.println(j);
+            }
+            return json;
+        }
+    }
     public static RecyclerViewFragment newInstance(NewsTab tabs, int pos) {
         RecyclerViewFragment f = new RecyclerViewFragment();
         f.tab_order = pos;
@@ -151,92 +274,7 @@ public class RecyclerViewFragment extends Fragment {
 
         //TODO: He added empty objects. We need to change this!
 
-        Thread thread = new Thread(){
-            @Override
-            public void run(){
-                while(!tabInfo.tabReady){
-                    try{
-                        sleep(50);
-                    }catch(InterruptedException e){}
-                }
-                JSONObject obj = getResponse();
-                JSONArray newsList;
-                JSONObject news;
-                NewsContent content;
-                try{
-                    if(obj == null){
-                        System.out.println("No object returned!");
-                    }
-                    else {
-                        obj = obj.getJSONObject("data");
-                        newsList = obj.getJSONArray("news");
-                        for (int i = 0; i < newsList.length(); ++i) {
-                            news = newsList.getJSONObject(i);
-                            content = new NewsContent();
-                            content.title = news.getString("title");
-                            content.category = news.getString("category");
-                            content.newsid = news.getLong("news_id");
-                            if(news.getJSONArray("imgs").length() > 0){
-                                content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
-                            }
-                            content.origin = news.getString("origin");
-                            content.urlstr = news.getJSONObject("source").getString("url");
-                            mContentItems.add(content);
-                        }
-                        mhandler.sendEmptyMessage(0);
-                    }
-                }catch(JSONException e){
-                    System.out.println(e);
-                }
-            }
-            public JSONObject getResponse(){
-                String tab_code = tabInfo.codedTitleAt(tab_order);
-                String url = "http://assignment.crazz.cn/news/query?locale=en&category=" + tab_code;
-                System.out.println("Getting response for " + tab_code);
-                String res = "";
-                InputStreamReader adp = null;
-                BufferedReader in = null;
-                URLConnection urlConn = null;
-                try{
-                    URL tar = new URL(url);
-                    if(tar != null){
-                        urlConn = tar.openConnection();
-                        urlConn.setConnectTimeout(3000);
-                        adp = new InputStreamReader(urlConn.getInputStream());
-                        in = new BufferedReader(adp);
-                        String line = null;
-                        while((line = in.readLine())!=null){
-                            res += line+"\n";
-                        }
-                    }
-                }
-                catch(MalformedURLException e){
-                    System.out.println(e);
-                }
-                catch(IOException e){
-                    System.out.println(e);
-                }
-                finally {
-                    if(in != null){
-                        try{
-                            in.close();
-                        }
-                        catch(IOException e){
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                JSONObject json = null;
-                try{
-                    System.out.println("Assigning values!");
-                    json = new JSONObject(res);
-                }
-                catch(JSONException j){
-                    System.out.println(j);
-                }
-                return json;
-            }
-        };
+        Thread thread = new Thread(new WebThread(WebThread.NEWEST));
         thread.start();
         /*
         {

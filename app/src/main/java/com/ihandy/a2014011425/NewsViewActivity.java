@@ -1,6 +1,7 @@
 package com.ihandy.a2014011425;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
@@ -33,7 +34,10 @@ public class NewsViewActivity extends Activity {
     WebView webView;
     ImageButton button_back;
     ImageButton button_favourite;
-    public NewsViewActivity(){}
+    int net_access_count;
+    public NewsViewActivity(){
+        net_access_count = 0;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,8 +54,18 @@ public class NewsViewActivity extends Activity {
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
+                if(net_access_count == 0) {
+                    view.loadUrl(url);
+                    ++net_access_count;
+                    return true;
+                }
+                else {
+                    Uri uri = Uri.parse(url);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    ++net_access_count;
+                    return true;
+                }
             }
         });
         WebSettings webSettings = webView.getSettings();
@@ -93,17 +107,18 @@ public class NewsViewActivity extends Activity {
         button_favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Favourite button clicked", Toast.LENGTH_SHORT).show();
                 switch(pageContent.favourite){
                     case NewsContent.FAVOURITE:
                         pageContent.favourite = NewsContent.NOT_FAVOURITE;
-                        button_favourite.setImageDrawable(getResources().getDrawable(R.drawable.red_heart));
+                        button_favourite.setImageDrawable(getResources().getDrawable(R.drawable.blue_favorite));
                         button_favourite.invalidate();
+                        Toast.makeText(getApplicationContext(), "Removed from favourite list", Toast.LENGTH_SHORT).show();
                         break;
                     case NewsContent.NOT_FAVOURITE:
                         pageContent.favourite = NewsContent.FAVOURITE;
-                        button_favourite.setImageDrawable(getResources().getDrawable(R.drawable.blue_favorite));
+                        button_favourite.setImageDrawable(getResources().getDrawable(R.drawable.red_heart));
                         button_favourite.invalidate();
+                        Toast.makeText(getApplicationContext(), "Added to favourite list", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }

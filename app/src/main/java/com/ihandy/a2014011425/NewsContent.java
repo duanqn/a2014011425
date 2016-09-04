@@ -21,7 +21,7 @@ public class NewsContent implements Parcelable{
     public NewsContent(){
         title = "一切反动派都是纸老虎";
         urlstr = "";
-        favourite = 0;
+        favourite = NOT_FAVOURITE;
     }
 
     /**
