@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/main_drawer_layout"
+    tools:openDrawer="start"
     tools:context="com.ihandy.a2014011425.MainActivity">
 
     <com.ihandy.a2014011425.materialviewpager.MaterialViewPager

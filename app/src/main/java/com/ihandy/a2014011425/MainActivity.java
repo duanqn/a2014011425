@@ -4,11 +4,15 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -22,7 +26,7 @@ import com.ihandy.a2014011425.materialviewpager.header.HeaderDesign;
 public class MainActivity extends DrawerActivity {
     private MaterialViewPager mViewPager;
     private Toolbar toolbar;
-
+    private ViewPagerAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,7 @@ public class MainActivity extends DrawerActivity {
         if(toolbar != null){
             setSupportActionBar(toolbar);
         }
+
         mViewPager.getViewPager().setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
 
         mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
@@ -62,8 +67,8 @@ public class MainActivity extends DrawerActivity {
                             */
                     default:
                         return HeaderDesign.fromColorResAndUrl(
-                                R.color.blue,
-                                "http://cdn1.tnwcdn.com/wp-content/blogs.dir/1/files/2014/06/wallpaper_51.jpg");
+                                R.color.red,
+                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
                     //TODO: use chrome Momentum pics
                 }
 
@@ -86,6 +91,42 @@ public class MainActivity extends DrawerActivity {
                 }
             });
         }
+        NavigationView navigationView = (NavigationView) findViewById(R.id.drawer_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+            @SuppressWarnings("StatementWithEmptyBody")
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                // Handle navigation view item clicks here.
+                int id = item.getItemId();
+                DrawerLayout drawer;
+                Intent intent;
+                switch(id){
+                    case R.id.nav_about_me:
+                        drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+                        drawer.closeDrawer(GravityCompat.START);
+                        intent = new Intent();
+                        intent.setClass(MainActivity.this, AboutMeActivity.class);
+                        MainActivity.this.startActivity(intent);
+                        break;
+                    case R.id.nav_category_management:
+                        drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+                        drawer.closeDrawer(GravityCompat.START);
+                        intent = new Intent();
+                        intent.setClass(MainActivity.this, CategoryManagementActivity.class);
+                        MainActivity.this.startActivity(intent);
+                        break;
+                    case R.id.nav_favourite:
+                        drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+                        drawer.closeDrawer(GravityCompat.START);
+                        intent = new Intent();
+                        intent.setClass(MainActivity.this, FavouriteActivity.class);
+                        MainActivity.this.startActivity(intent);
+                        break;
+                }
+
+                return true;
+            }
+        });
         /*
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         tabLayout = (TabLayout) findViewById(R.id.tabs);

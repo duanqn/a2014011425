@@ -1,5 +1,7 @@
 package com.ihandy.a2014011425;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,8 +39,10 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     Handler imgLoadNotifier;
     static final int TYPE_HEADER = 0;
     static final int TYPE_CELL = 1;
+    Activity context;
 
-    public TestRecyclerViewAdapter(List<NewsContent> contents) {
+    public TestRecyclerViewAdapter(Activity _context, List<NewsContent> contents) {
+        context = _context;
         this.contents = contents;
     }
 
@@ -149,6 +153,7 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                         public void handleMessage(Message msg){
                             switch (msg.what){
                                 case 0:
+                                    cholder.detail.setText(c.origin);
                                     cholder.img.setImageBitmap((Bitmap)msg.obj);
                                     cholder.img.setVisibility(View.VISIBLE);
                                     break;
@@ -163,5 +168,14 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                 }
                 break;
         }
+        cholder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("targetURL", c.urlstr);
+                intent.setClass(context.getApplicationContext(), NewsViewActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 }
