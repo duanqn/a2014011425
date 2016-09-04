@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/colorPrimaryDark">
+    <ImageButton
+        android:background="@color/transparent"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/actionbar_news_view_backbtn"
+        android:scaleType="centerInside"
+        android:src="@drawable/back_arrow"/>
+    <TextView
+        android:id="@+id/actionbar_news_view_title"
+        android:layout_marginLeft="30dp"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:text="@string/app_name"/>
+    <ImageButton
+        android:background="@color/transparent"
+        android:id="@+id/actionbar_news_view_sharebtn"
+        android:layout_marginTop="@dimen/actionBarTopMargin"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/share"/>
+    <ImageButton
+        android:background="@color/transparent"
+        android:id="@+id/actionbar_news_view_favouritebtn"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/blue_favorite"/>
+
+</LinearLayout>

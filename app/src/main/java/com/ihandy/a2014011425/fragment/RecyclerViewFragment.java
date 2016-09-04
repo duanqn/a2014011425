@@ -5,12 +5,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.ihandy.a2014011425.NewsContent;
 import com.ihandy.a2014011425.NewsTab;
@@ -38,19 +41,21 @@ import java.util.List;
 //TODO: Manually overwrite
 public class RecyclerViewFragment extends Fragment {
 
-    static final boolean GRID_LAYOUT = false;
-    private static final int ITEM_COUNT = 5;
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshWidget;
+    private LinearLayoutManager layoutManager;
     private RecyclerView.Adapter mAdapter;
     private int tab_order;
     private NewsTab tabInfo;
     private List<NewsContent> mContentItems = new ArrayList<>();
     private Handler mhandler;
+    private int lastVisibleItem;
 
     public static RecyclerViewFragment newInstance(NewsTab tabs, int pos) {
         RecyclerViewFragment f = new RecyclerViewFragment();
         f.tab_order = pos;
         f.tabInfo = tabs;
+        f.lastVisibleItem = 0;
         return f;
     }
 
@@ -62,14 +67,18 @@ public class RecyclerViewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mSwipeRefreshWidget = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
+        mSwipeRefreshWidget.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshWidget.setRefreshing(true);
+                // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
+                mhandler.sendEmptyMessageDelayed(2, 2000);
+            }
+        });
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager layoutManager;
 
-        if (GRID_LAYOUT) {
-            layoutManager = new GridLayoutManager(getActivity(), 2);
-        } else {
-            layoutManager = new LinearLayoutManager(getActivity());
-        }
+        layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
@@ -81,14 +90,67 @@ public class RecyclerViewFragment extends Fragment {
         //mAdapter = new RecyclerViewMaterialAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
-        //TODO: He added empty objects. We need to change this!
         mhandler = new Handler(){
             @Override
             public void handleMessage(Message msg){
-                // no need to switch msg.what
-                mAdapter.notifyDataSetChanged();
+                switch (msg.what){
+                    case 0:
+                        mAdapter.notifyDataSetChanged();
+                        break;
+                    case 1:
+                        //向下刷新
+                        Log.d("Refresher","Refreshing...\n");
+                        mSwipeRefreshWidget.setRefreshing(false);
+                        break;
+                    case 2:
+                        //向上刷新
+                        Log.d("Refresher","Refreshing...\n");
+                        mSwipeRefreshWidget.setRefreshing(false);
+                        break;
+                }
             }
         };
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            /**
+             * Callback method to be invoked when the RecyclerView has been scrolled. This will be
+             * called after the scroll has completed.
+             * <p/>
+             * This callback will also be called if visible item range changes after a layout
+             * calculation. In that case, dx and dy will be 0.
+             *
+             * @param recyclerView The RecyclerView which scrolled.
+             * @param dx           The amount of horizontal scroll.
+             * @param dy           The amount of vertical scroll.
+             */
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItem = RecyclerViewFragment.this.layoutManager.findLastVisibleItemPosition();
+            }
+
+            /**
+             * Callback method to be invoked when RecyclerView's scroll state changes.
+             *
+             * @param recyclerView The RecyclerView whose scroll state has changed.
+             * @param newState     The updated scroll state. One of {@link #SCROLL_STATE_IDLE},
+             *                     {@link #SCROLL_STATE_DRAGGING} or {@link #SCROLL_STATE_SETTLING}.
+             */
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && lastVisibleItem + 1 == mAdapter.getItemCount()) {
+                    // 下拉获取更旧的新闻
+                    mSwipeRefreshWidget.setRefreshing(true);
+                    // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
+                    mhandler.sendEmptyMessageDelayed(1, 1000);
+                }
+            }
+        });
+
+        //TODO: He added empty objects. We need to change this!
+
         Thread thread = new Thread(){
             @Override
             public void run(){

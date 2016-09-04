@@ -172,7 +172,7 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
-                intent.putExtra("targetURL", c.urlstr);
+                intent.putExtra("content", c);
                 intent.setClass(context.getApplicationContext(), NewsViewActivity.class);
                 context.startActivity(intent);
             }

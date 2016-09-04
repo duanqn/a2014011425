@@ -12,7 +12,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,22 +28,24 @@ import java.net.URLConnection;
 import java.util.Locale;
 
 public class NewsViewActivity extends Activity {
-    public String newsurl;
+    NewsContent pageContent;
     //Handler newsFetcher;
     WebView webView;
+    ImageButton button_back;
+    ImageButton button_favourite;
     public NewsViewActivity(){}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window win = getWindow();
-        win.requestFeature(Window.FEATURE_LEFT_ICON);
         setContentView(R.layout.activity_news_view);
-        win.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.red_heart);
         Intent intent = getIntent();
-        newsurl = intent.getStringExtra("targetURL");
+        pageContent = intent.getParcelableExtra("content");
+        String newsurl = pageContent.urlstr;
 
 
         webView = (WebView)findViewById(R.id.news_view_webView);
+        webView.setVisibility(View.INVISIBLE);
         webView.loadUrl(newsurl);
         webView.setWebViewClient(new WebViewClient(){
             @Override
@@ -58,7 +62,7 @@ public class NewsViewActivity extends Activity {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setSupportZoom(true);
 
-        TextView content = (TextView)findViewById(R.id.news_view_text);
+        final TextView content = (TextView)findViewById(R.id.news_view_text);
         content.setText(newsurl);
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -69,11 +73,39 @@ public class NewsViewActivity extends Activity {
                 if (newProgress == 100) {
                     // 网页加载完成
                     content.setVisibility(View.INVISIBLE);
+                    webView.setVisibility(View.VISIBLE);
                 } else {
                     // 加载中
                     content.setText(String.format(Locale.getDefault(), "Loading... %d%%", newProgress));
                 }
 
+            }
+        });
+        button_back = (ImageButton)findViewById(R.id.actionbar_news_view_backbtn);
+        button_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Back button clicked", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+        button_favourite = (ImageButton)findViewById(R.id.actionbar_news_view_favouritebtn);
+        button_favourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Favourite button clicked", Toast.LENGTH_SHORT).show();
+                switch(pageContent.favourite){
+                    case NewsContent.FAVOURITE:
+                        pageContent.favourite = NewsContent.NOT_FAVOURITE;
+                        button_favourite.setImageDrawable(getResources().getDrawable(R.drawable.red_heart));
+                        button_favourite.invalidate();
+                        break;
+                    case NewsContent.NOT_FAVOURITE:
+                        pageContent.favourite = NewsContent.FAVOURITE;
+                        button_favourite.setImageDrawable(getResources().getDrawable(R.drawable.blue_favorite));
+                        button_favourite.invalidate();
+                        break;
+                }
             }
         });
         /*
@@ -103,6 +135,7 @@ public class NewsViewActivity extends Activity {
 
 
     public String getResponse(){
+        String newsurl = pageContent.urlstr;
         System.out.println("Getting news from " + newsurl);
         InputStreamReader adp = null;
         BufferedReader in = null;

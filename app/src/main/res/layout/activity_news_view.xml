@@ -4,15 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ihandy.a2014011425.NewsViewActivity">
+    <include layout="@layout/actionbar_news_view"
+        android:id="@+id/actionbar_news"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:layout_below="@id/actionbar_news"
         android:id="@+id/news_view_text"
         android:text="" />
     <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/actionbar_news"
         android:id="@+id/news_view_webView"
         />
 

@@ -11,8 +11,9 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/SimpleTheme">
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +26,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AboutMeActivity"
-            android:label="@string/title_activity_about_me" />
+            android:label="@string/title_activity_about_me"/>
         <activity
             android:name=".CategoryManagementActivity"
             android:label="@string/title_activity_category_management" />
@@ -34,8 +35,7 @@
             android:label="@string/title_activity_favourite" />
         <activity
             android:name=".NewsViewActivity"
-            android:label="@string/title_activity_news_view"
-            android:theme="@android:style/Theme.Light"></activity>
+            android:label="@string/title_activity_news_view"/>
     </application>
 
 </manifest>

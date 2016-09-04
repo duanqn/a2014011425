@@ -12,6 +12,7 @@
     <color name="lime">#CDDC39</color>
     <color name="black">#000000</color>
 
+    <color name="transparent">#00000000</color>
     <color name="accent_color">@color/blue</color>
     <color name="statusBarColor">@color/blue</color>
     <color name="navigationBarColor">@android:color/black</color>
