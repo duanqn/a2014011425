@@ -22,7 +22,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private NewsTab tabs;
     Handler handler;
     private NewsApp app;
-    private RecyclerViewFragment[] fragments;
     private static final int MAX_TAB=10;    //Ugly coding and we hope ta won't find this
 
     private ViewPagerAdapter(FragmentManager fm) {
@@ -59,20 +58,13 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         ViewPagerAdapter r = new ViewPagerAdapter(fm);
         r.setApp(appPointer);
         r.getGlobalTabs();
-        r.fragments = new RecyclerViewFragment[MAX_TAB];   //not tabs.getTitleNum()
         return r;
     }
 
     //获取显示页的Fragment
     @Override
     public Fragment getItem(int position) {
-        System.out.println("Request a new instance "+tabs.titleAt(position));
-        if(position >= tabs.getTitleNum())
-            return null;
-        if(fragments[position] == null)
-            return (fragments[position]=RecyclerViewFragment.newInstance(tabs, position));
-        else
-            return fragments[position];
+        return RecyclerViewFragment.newInstance(tabs, position);
     }
 
 
@@ -99,9 +91,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public boolean removeTab(int position){
         boolean r = tabs.makeTabInvisible(position);
         if(r){
-            for(int i = position; i < fragments.length - 1; ++i){
-                fragments[i] = fragments[i+1];
-            }
             this.notifyDataSetChanged();
         }
         return r;
@@ -110,10 +99,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     //Use for removing tabs
     @Override
     public int getItemPosition(Object object) {
-        for(int i = 0; i < tabs.getTitleNum(); ++i){
-            if(fragments[i] == (RecyclerViewFragment) object)
-                return i;
-        }
         return POSITION_NONE;
     }
 
