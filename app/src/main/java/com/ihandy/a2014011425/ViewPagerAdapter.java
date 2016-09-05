@@ -64,7 +64,10 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     //获取显示页的Fragment
     @Override
     public Fragment getItem(int position) {
-        return RecyclerViewFragment.newInstance(tabs, position);
+        if(tabs.map.containsKey(tabs.titleAt(position)))
+            return tabs.map.get(tabs.titleAt(position));
+        else
+            return RecyclerViewFragment.newInstance(tabs, position);
     }
 
 

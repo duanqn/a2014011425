@@ -176,8 +176,9 @@ public class RecyclerViewFragment extends Fragment {
     }
     public static RecyclerViewFragment newInstance(NewsTab tabs, int pos) {
         RecyclerViewFragment f = new RecyclerViewFragment();
-        f.tab_order = pos;
+
         f.tabInfo = tabs;
+        f.tab_order = tabs.getTabOrderFromVisibleOrder(pos);
         f.lastVisibleItem = 0;
         tabs.registerPage(tabs.titleAt(pos), f);
         System.out.println("New instance with title = "+tabs.titleAt(pos));

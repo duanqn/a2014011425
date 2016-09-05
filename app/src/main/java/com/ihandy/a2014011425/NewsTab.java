@@ -128,6 +128,14 @@ public class NewsTab{
     public void registerPage(String title, RecyclerViewFragment f){
         map.put(title, f);
     }
+    public int getTabOrderFromVisibleOrder(int visibleOrder){
+        String title = titleAt(visibleOrder);
+        for(int i = 0; i < titleList.size(); ++i){
+            if(titleList.get(i).equals(title))
+                return i;
+        }
+        return -1;
+    }
     public boolean makeTabInvisible(int position){
         for(int i = 0; i < getTitleNum(); ++i){
             System.out.println(titleAt(i));
