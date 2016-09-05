@@ -53,9 +53,9 @@ public class RecyclerViewFragment extends Fragment {
     private int lastVisibleItem;
 
     class WebThread implements Runnable{
-        int max_news_id;
+        long max_news_id;
         public static final int NEWEST = -1;
-        public WebThread(int max_id){
+        public WebThread(long max_id){
             max_news_id = max_id;
         }
         public void run(){
@@ -72,53 +72,53 @@ public class RecyclerViewFragment extends Fragment {
                 System.out.println("No object returned!");
             }
             else {
-                if(!obj.has("data")){
-                    if(mContentItems.isEmpty()) {
-                        content = new NewsContent();
-                        content.title = "根据相关法律法规和政策,部分结果未予显示";
-                        content.urlstr = "about:blank";
-                        content.category = "default";
-                        content.newsid = 0;
-                        content.origin = "";
-                        content.imageurl = null;
-                        mContentItems.add(content);
-                        mhandler.sendEmptyMessage(0);   //no result
-                    }
-                }
-                else {
-                    try {
-                        obj = obj.getJSONObject("data");
-                        newsList = obj.getJSONArray("news");
-                        for (int i = 0; i < newsList.length(); ++i) {
-                            news = newsList.getJSONObject(i);
+                synchronized (mContentItems) {
+                    if (!obj.has("data")) {
+                        if (mContentItems.isEmpty()) {
                             content = new NewsContent();
-                            content.title = news.getString("title");
-                            content.category = news.getString("category");
-                            content.newsid = news.getLong("news_id");
-                            if (news.getJSONArray("imgs").length() > 0) {
-                                content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
-                            }
-                            content.origin = news.getString("origin");
-                            content.urlstr = news.getJSONObject("source").getString("url");
-                            boolean crash = false;
-                            //TODO: Insertion Sort
-                            int j;
-                            for(j = 0; j < mContentItems.size(); ++j){
-                                if(mContentItems.get(j).newsid == content.newsid){
-                                    crash = true;
-                                    break;
-                                }
-                                else if(mContentItems.get(j).newsid < content.newsid){
-                                    crash = false;
-                                    break;
-                                }
-                            }
-                            if(!crash)
-                                mContentItems.add(j, content);
+                            content.title = "根据相关法律法规和政策,部分结果未予显示";
+                            content.urlstr = "about:blank";
+                            content.category = "default";
+                            content.newsid = 0;
+                            content.origin = "";
+                            content.imageurl = null;
+                            mContentItems.add(content);
+                            mhandler.sendEmptyMessage(0);   //no result
                         }
-                        mhandler.sendEmptyMessage(0);
-                    } catch (JSONException e) {
-                        System.out.println(e);
+                    } else {
+                        try {
+                            obj = obj.getJSONObject("data");
+                            newsList = obj.getJSONArray("news");
+                            for (int i = 0; i < newsList.length(); ++i) {
+                                news = newsList.getJSONObject(i);
+                                content = new NewsContent();
+                                content.title = news.getString("title");
+                                content.category = news.getString("category");
+                                content.newsid = news.getLong("news_id");
+                                if (news.getJSONArray("imgs").length() > 0) {
+                                    content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
+                                }
+                                content.origin = news.getString("origin");
+                                content.urlstr = news.getJSONObject("source").getString("url");
+                                boolean crash = false;
+                                //TODO: Insertion Sort
+                                int j;
+                                for (j = 0; j < mContentItems.size(); ++j) {
+                                    if (mContentItems.get(j).newsid == content.newsid) {
+                                        crash = true;
+                                        break;
+                                    } else if (mContentItems.get(j).newsid < content.newsid) {
+                                        crash = false;
+                                        break;
+                                    }
+                                }
+                                if (!crash)
+                                    mContentItems.add(j, content);
+                            }
+                            mhandler.sendEmptyMessage(0);
+                        } catch (JSONException e) {
+                            System.out.println(e);
+                        }
                     }
                 }
             }
@@ -179,6 +179,8 @@ public class RecyclerViewFragment extends Fragment {
         f.tab_order = pos;
         f.tabInfo = tabs;
         f.lastVisibleItem = 0;
+        tabs.registerPage(tabs.titleAt(pos), f);
+        System.out.println("New instance with title = "+tabs.titleAt(pos));
         return f;
     }
 
@@ -196,7 +198,8 @@ public class RecyclerViewFragment extends Fragment {
             public void onRefresh() {
                 mSwipeRefreshWidget.setRefreshing(true);
                 // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
-                mhandler.sendEmptyMessageDelayed(2, 2000);
+                Thread thread = new Thread(new WebThread(WebThread.NEWEST));
+                thread.start();
             }
         });
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -218,18 +221,11 @@ public class RecyclerViewFragment extends Fragment {
             public void handleMessage(Message msg){
                 switch (msg.what){
                     case 0:
+                        System.out.println("Update message received");
                         mAdapter.notifyDataSetChanged();
-                        break;
-                    case 1:
-                        //向下刷新
-                        Log.d("Refresher","Refreshing...\n");
                         mSwipeRefreshWidget.setRefreshing(false);
                         break;
-                    case 2:
-                        //向上刷新
-                        Log.d("Refresher","Refreshing...\n");
-                        mSwipeRefreshWidget.setRefreshing(false);
-                        break;
+
                 }
             }
         };
@@ -267,7 +263,8 @@ public class RecyclerViewFragment extends Fragment {
                     // 下拉获取更旧的新闻
                     mSwipeRefreshWidget.setRefreshing(true);
                     // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
-                    mhandler.sendEmptyMessageDelayed(1, 1000);
+                    Thread thread = new Thread(new WebThread(mAdapter.getItemId(lastVisibleItem)));
+                    thread.start();
                 }
             }
         });

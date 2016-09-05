@@ -44,6 +44,7 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     public TestRecyclerViewAdapter(Activity _context, List<NewsContent> contents) {
         context = _context;
         this.contents = contents;
+        super.setHasStableIds(true);
     }
 
 
@@ -177,5 +178,11 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                 context.startActivity(intent);
             }
         });
+    }
+
+
+    @Override
+    public long getItemId(int position) {
+        return contents.get(position).newsid;
     }
 }

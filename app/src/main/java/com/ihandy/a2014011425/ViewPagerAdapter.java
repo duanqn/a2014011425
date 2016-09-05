@@ -10,7 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ihandy.a2014011425.fragment.RecyclerViewFragment;
 
@@ -18,21 +20,18 @@ import java.util.ArrayList;
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     final int NEWS_TAB_UPDATE = 1;
     private NewsTab tabs;
-    private ArrayList<RecyclerViewFragment> fragments;
     Handler handler;
+    private NewsApp app;
+    private RecyclerViewFragment[] fragments;
+    private static final int MAX_TAB=10;    //Ugly coding and we hope ta won't find this
 
-    public ViewPagerAdapter(FragmentManager fm) {
+    private ViewPagerAdapter(FragmentManager fm) {
         super(fm);
-        fragments = new ArrayList<>();
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg){
                 switch(msg.what){
                     case NEWS_TAB_UPDATE:
-                        tabs = (NewsTab) msg.obj;
-                        for(int i = 0; i < tabs.getTitleNum(); ++i){
-                            fragments.add(RecyclerViewFragment.newInstance(tabs, i));
-                        }
                         ViewPagerAdapter.this.notifyDataSetChanged();
                         break;
                     default:
@@ -42,23 +41,42 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         Thread thread = new Thread(){
             @Override
             public void run(){
-                NewsTab nt = new NewsTab();
-                nt.getResponse();
-                nt.parseTab();
-                Message msg = new Message();
-                msg.what = NEWS_TAB_UPDATE;
-                msg.obj = nt;
-                ViewPagerAdapter.this.handler.sendMessage(msg);
+                tabs.getResponse();
+                tabs.parseTab();
+                ViewPagerAdapter.this.handler.sendEmptyMessage(NEWS_TAB_UPDATE);
             }
         };
         thread.start();
     }
 
+    public void setApp(NewsApp appPointer){
+        app = appPointer;
+    }
+    public void getGlobalTabs(){
+        tabs = app.share_tabs;
+    }
+    public static ViewPagerAdapter getNewInstance(NewsApp appPointer, FragmentManager fm){
+        ViewPagerAdapter r = new ViewPagerAdapter(fm);
+        r.setApp(appPointer);
+        r.getGlobalTabs();
+        r.fragments = new RecyclerViewFragment[MAX_TAB];   //not tabs.getTitleNum()
+        return r;
+    }
+
     //获取显示页的Fragment
     @Override
     public Fragment getItem(int position) {
-        return fragments.get(position);
+        System.out.println("Request a new instance "+tabs.titleAt(position));
+        if(position >= tabs.getTitleNum())
+            return null;
+        if(fragments[position] == null)
+            return (fragments[position]=RecyclerViewFragment.newInstance(tabs, position));
+        else
+            return fragments[position];
     }
+
+
+
 
     // page个数设置
     @Override
@@ -76,5 +94,30 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             return tabs.titleAt(position);
         else
             return "";
+    }
+
+    public boolean removeTab(int position){
+        boolean r = tabs.makeTabInvisible(position);
+        if(r){
+            for(int i = position; i < fragments.length - 1; ++i){
+                fragments[i] = fragments[i+1];
+            }
+            this.notifyDataSetChanged();
+        }
+        return r;
+    }
+
+    //Use for removing tabs
+    @Override
+    public int getItemPosition(Object object) {
+        for(int i = 0; i < tabs.getTitleNum(); ++i){
+            if(fragments[i] == (RecyclerViewFragment) object)
+                return i;
+        }
+        return POSITION_NONE;
+    }
+
+    public NewsTab getTabs(){
+        return tabs;
     }
 }

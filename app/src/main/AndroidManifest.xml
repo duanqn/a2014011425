@@ -11,6 +11,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
+        android:name=".NewsApp"
         android:theme="@style/SimpleTheme">
         <activity android:name=".MainActivity"
             android:theme="@style/AppTheme">

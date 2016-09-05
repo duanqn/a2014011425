@@ -1,37 +1,46 @@
 package com.ihandy.a2014011425;
 
+import com.ihandy.a2014011425.fragment.RecyclerViewFragment;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
  * Created by max on 16-8-28.
  */
-public class NewsTab {
+public class NewsTab{
     private ArrayList<String> titleList = new ArrayList<>();
+    private ArrayList<String> titleListVisible = new ArrayList<>();
+    public HashMap<String, RecyclerViewFragment> map = new HashMap<>();
     private ArrayList<String> codedTitleList = new ArrayList<>();
     private JSONObject obj;
     public boolean tabReady;
     public void parseTab(){
-        String key, value;
+        String key;
+        String value;
         try{
             obj = obj.getJSONObject("data");
             obj = obj.getJSONObject("categories");
-            Iterator keylist = obj.keys();
-            while(keylist.hasNext()){
-                key = (String)keylist.next();
+            Iterator<String> iter = obj.keys();
+            while(iter.hasNext()){
+                key = iter.next();
                 value = obj.getString(key);
-                titleList.add(value);
                 codedTitleList.add(key);
+                titleList.add(value);
+                titleListVisible.add(value);
             }
             tabReady = true;
         }catch(JSONException e){
@@ -42,15 +51,16 @@ public class NewsTab {
         tabReady = false;
     }
     public ArrayList<String> getTitle(){
-        return titleList;
+        return titleListVisible;
     }
     public ArrayList<String> getCodedTitle(){
         return codedTitleList;
     }
+
     public String titleAt(int pos){
         String res = null;
         try{
-            res = titleList.get(pos);
+            res = titleListVisible.get(pos);
         }catch(ArrayIndexOutOfBoundsException e){
             e.printStackTrace();
         }
@@ -66,7 +76,7 @@ public class NewsTab {
         return res;
     }
     public int getTitleNum(){
-        return titleList.size();
+        return titleListVisible.size();
     }
     public String getResponse(){
         long mills = System.currentTimeMillis();
@@ -77,7 +87,8 @@ public class NewsTab {
         BufferedReader in = null;
         URLConnection urlConn = null;
         try{
-            URL tar = new URL(url);
+            URL tar = null;
+            tar = new URL(url);
             if(tar != null){
                 urlConn = tar.openConnection();
                 urlConn.setConnectTimeout(3000);
@@ -113,5 +124,22 @@ public class NewsTab {
             System.out.println(j);
         }
         return res;
+    }
+    public void registerPage(String title, RecyclerViewFragment f){
+        map.put(title, f);
+    }
+    public boolean makeTabInvisible(int position){
+        for(int i = 0; i < getTitleNum(); ++i){
+            System.out.println(titleAt(i));
+        }
+        if(position >= 0 && position < titleList.size()) {
+            titleListVisible.remove(position);
+            for(int i = 0; i < getTitleNum(); ++i){
+                System.out.println(titleAt(i));
+            }
+            return true;
+        }
+        else
+            return false;
     }
 }

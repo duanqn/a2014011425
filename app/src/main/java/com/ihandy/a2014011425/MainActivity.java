@@ -27,6 +27,7 @@ public class MainActivity extends DrawerActivity {
     private MaterialViewPager mViewPager;
     private Toolbar toolbar;
     private ViewPagerAdapter mAdapter;
+    private NewsTab tabs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +41,11 @@ public class MainActivity extends DrawerActivity {
         if(toolbar != null){
             setSupportActionBar(toolbar);
         }
-
-        mViewPager.getViewPager().setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
+        NewsApp mApp = (NewsApp) getApplication();
+        mAdapter = ViewPagerAdapter.getNewInstance(mApp, getSupportFragmentManager());
+        mApp.setGlobalViewPagerAdapter(mAdapter);
+        mViewPager.getViewPager().setAdapter(mAdapter);
+        tabs = mAdapter.getTabs();
 
         mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
             @Override
