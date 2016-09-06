@@ -2,6 +2,7 @@ package com.ihandy.a2014011425;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
@@ -128,6 +129,17 @@ public class MainActivity extends DrawerActivity {
                         break;
                     case R.id.nav_clear:
                         //drop all tables!
+                        synchronized (mApp.database){
+                            Cursor cursor = mApp.database.query("tabs", new String[]{"tab_order", "codedTitle", "title", "watched"}, null, null, null, null, "tab_order");
+                            cursor.moveToFirst();
+                            for(int i = 0; i < cursor.getCount(); ++i){
+                                String label = cursor.getString(1);
+                                mApp.database.execSQL("drop table "+label);
+                                cursor.move(1);
+                            }
+                            mApp.database.execSQL("drop table tabs");
+                            finish();
+                        }
                         break;
                 }
 

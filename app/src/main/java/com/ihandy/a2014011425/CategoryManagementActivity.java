@@ -9,12 +9,12 @@ import android.widget.ListView;
 
 public class CategoryManagementActivity extends Activity {
     ListView listup, listdown;
+    NewsApp mApp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_management);
-
-
+        mApp = (NewsApp) getApplication();
         listup = (ListView)findViewById(R.id.category_management_list_watched);
         listdown = (ListView)findViewById(R.id.category_management_list_unwatched);
         WatchedCategoryManagementAdapter mAdapter1 = WatchedCategoryManagementAdapter.getNewInstance(this, (NewsApp)getApplication());
@@ -24,6 +24,17 @@ public class CategoryManagementActivity extends Activity {
         listdown.setAdapter(mAdapter2);
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        NewsTab tabs = mApp.share_tabs;
+        String s;
+        synchronized (mApp.database){
+            for(int i = 0; i < tabs.getTitle().size(); ++i){
+                s = tabs.getTitle().get(i);
+                int watched = tabs.getVisibleTitle().contains(s)?1:0;
+                mApp.database.execSQL("update tabs set watched=? where title=?", new Object[]{new Integer(watched), s});
+            }
+        }
+        super.onDestroy();
+    }
 }

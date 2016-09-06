@@ -1,5 +1,7 @@
 package com.ihandy.a2014011425.fragment;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.ihandy.a2014011425.NewsApp;
 import com.ihandy.a2014011425.NewsContent;
 import com.ihandy.a2014011425.NewsTab;
 import com.ihandy.a2014011425.materialviewpager.header.MaterialViewPagerHeaderDecorator;
@@ -34,6 +37,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by florentchampigny on 24/04/15.
@@ -47,15 +51,16 @@ public class RecyclerViewFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private RecyclerView.Adapter mAdapter;
     private int tab_order;
+    private NewsApp app;
     private NewsTab tabInfo;
     private List<NewsContent> mContentItems = new ArrayList<>();
     private Handler mhandler;
     private int lastVisibleItem;
 
-    class WebThread implements Runnable{
+    class RefreshThread implements Runnable{
         long max_news_id;
         public static final int NEWEST = -1;
-        public WebThread(long max_id){
+        public RefreshThread (long max_id){
             max_news_id = max_id;
         }
         public void run(){
@@ -74,17 +79,7 @@ public class RecyclerViewFragment extends Fragment {
             else {
                 synchronized (mContentItems) {
                     if (!obj.has("data")) {
-                        if (mContentItems.isEmpty()) {
-                            content = new NewsContent();
-                            content.title = "根据相关法律法规和政策,部分结果未予显示";
-                            content.urlstr = "about:blank";
-                            content.category = "default";
-                            content.newsid = 0;
-                            content.origin = "";
-                            content.imageurl = null;
-                            mContentItems.add(content);
-                            mhandler.sendEmptyMessage(0);   //no result
-                        }
+
                     } else {
                         try {
                             obj = obj.getJSONObject("data");
@@ -102,7 +97,6 @@ public class RecyclerViewFragment extends Fragment {
                                 if(news.getJSONObject("source").has("url"))
                                     content.urlstr = news.getJSONObject("source").getString("url");
                                 boolean crash = false;
-                                //TODO: Insertion Sort
                                 int j;
                                 for (j = 0; j < mContentItems.size(); ++j) {
                                     if (mContentItems.get(j).newsid == content.newsid) {
@@ -116,6 +110,7 @@ public class RecyclerViewFragment extends Fragment {
                                 if (!crash)
                                     mContentItems.add(j, content);
                             }
+                            writeContent();
                             mhandler.sendEmptyMessage(0);
                         } catch (JSONException e) {
                             System.out.println(e);
@@ -174,7 +169,141 @@ public class RecyclerViewFragment extends Fragment {
             }
             return json;
         }
+        public void writeContent(){
+            Cursor cursor;
+            NewsContent current;
+            final String label = tabInfo.codedTitleAt(tab_order);
+            synchronized (app.database){
+                for(int i = 0; i < mContentItems.size(); ++i){
+                    current = mContentItems.get(i);
+                    cursor = app.database.query(label, new String[]{"news_id", "title", "source_url", "image_url", "origin", "category", "favourite"},
+                            "news_id=?", new String[]{String.format(Locale.getDefault(), "%f", (double)current.newsid)}, null, null, "news_id");
+                    if(cursor.getCount() == 0){
+                        ContentValues values = new ContentValues();
+                        values.put("news_id", (double)current.newsid);
+                        values.put("title", current.title);
+                        values.put("source_url", current.urlstr);
+                        values.put("image_url", current.imageurl);
+                        values.put("origin", current.origin);
+                        values.put("category", current.category);
+                        values.put("favourite", current.favourite);
+                        app.database.insert(label, null, values);
+                    }
+                    else{
+                        ContentValues values = new ContentValues();
+                        values.put("title", current.title);
+                        values.put("source_url", current.urlstr);
+                        values.put("image_url", current.imageurl);
+                        values.put("origin", current.origin);
+                        values.put("category", current.category);
+                        values.put("favourite", current.favourite);
+                        app.database.update(label, values, "news_id=?", new String[]{String.format(Locale.getDefault(), "%f", (double)current.newsid)});
+                    }
+                }
+            }
+        }
     }
+
+
+    class NewThread extends RefreshThread{
+        public NewThread (long max_id){
+            super(max_id);
+        }
+        @Override
+        public void run(){
+            while(!tabInfo.tabReady){
+                try{
+                    Thread.sleep(50);
+                }catch(InterruptedException e){}
+            }
+            JSONObject obj = getResponse();
+            JSONArray newsList;
+            JSONObject news;
+            NewsContent content;
+            if(obj == null){
+                // No results from network, try using database
+                Cursor cursor;
+                synchronized (app.database){
+                    final String label = tabInfo.lookupCodedTitle(tabInfo.titleAt(tab_order));
+                    cursor = app.database.query(label, new String[]{"news_id", "title", "source_url", "image_url", "origin", "category", "favourite"},
+                            null, null, null, null, "news_id");
+                    if(cursor.moveToFirst()){
+                        for(int i = 0; i < cursor.getCount(); ++i){
+                            content = new NewsContent();
+                            content.newsid = (long) cursor.getDouble(0);
+                            content.title = cursor.getString(1);
+                            content.urlstr = cursor.getString(2);
+                            content.imageurl = cursor.getString(3);
+                            content.origin = cursor.getString(4);
+                            content.category = cursor.getString(5);
+                            content.favourite = cursor.getInt(6);
+                            boolean crash = false;
+                            int j;
+                            for (j = 0; j < mContentItems.size(); ++j) {
+                                if (mContentItems.get(j).newsid == content.newsid) {
+                                    crash = true;
+                                    break;
+                                } else if (mContentItems.get(j).newsid < content.newsid) {
+                                    crash = false;
+                                    break;
+                                }
+                            }
+                            if (!crash)
+                                mContentItems.add(j, content);
+                        }
+                        writeContent();
+                    }
+                    else{
+                        return;
+                    }
+                }
+            }
+            else {
+                synchronized (mContentItems) {
+                    if (!obj.has("data")) {
+
+                    } else {
+                        try {
+                            obj = obj.getJSONObject("data");
+                            newsList = obj.getJSONArray("news");
+                            for (int i = 0; i < newsList.length(); ++i) {
+                                news = newsList.getJSONObject(i);
+                                content = new NewsContent();
+                                content.title = news.getString("title");
+                                content.category = news.getString("category");
+                                content.newsid = news.getLong("news_id");
+                                if (news.getJSONArray("imgs").length() > 0) {
+                                    content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
+                                }
+                                content.origin = news.getString("origin");
+                                if(news.getJSONObject("source").has("url"))
+                                    content.urlstr = news.getJSONObject("source").getString("url");
+                                boolean crash = false;
+                                int j;
+                                for (j = 0; j < mContentItems.size(); ++j) {
+                                    if (mContentItems.get(j).newsid == content.newsid) {
+                                        crash = true;
+                                        break;
+                                    } else if (mContentItems.get(j).newsid < content.newsid) {
+                                        crash = false;
+                                        break;
+                                    }
+                                }
+                                if (!crash)
+                                    mContentItems.add(j, content);
+                            }
+                            writeContent();
+                            mhandler.sendEmptyMessage(0);
+                        } catch (JSONException e) {
+                            System.out.println(e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     public static RecyclerViewFragment newInstance(NewsTab tabs, int pos) {
         RecyclerViewFragment f = new RecyclerViewFragment();
 
@@ -182,6 +311,8 @@ public class RecyclerViewFragment extends Fragment {
         f.tab_order = tabs.getTabOrderFromVisibleOrder(pos);
         f.lastVisibleItem = 0;
         tabs.registerPage(tabs.titleAt(pos), f);
+        f.app = tabs.getApp();
+
         System.out.println("New instance with title = "+tabs.titleAt(pos));
         return f;
     }
@@ -200,7 +331,7 @@ public class RecyclerViewFragment extends Fragment {
             public void onRefresh() {
                 mSwipeRefreshWidget.setRefreshing(true);
                 // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
-                Thread thread = new Thread(new WebThread(WebThread.NEWEST));
+                Thread thread = new Thread(new RefreshThread(RefreshThread.NEWEST));
                 thread.start();
             }
         });
@@ -265,7 +396,7 @@ public class RecyclerViewFragment extends Fragment {
                     // 下拉获取更旧的新闻
                     mSwipeRefreshWidget.setRefreshing(true);
                     // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
-                    Thread thread = new Thread(new WebThread(mAdapter.getItemId(lastVisibleItem)));
+                    Thread thread = new Thread(new RefreshThread(mAdapter.getItemId(lastVisibleItem)));
                     thread.start();
                 }
             }
@@ -273,7 +404,7 @@ public class RecyclerViewFragment extends Fragment {
 
         //TODO: He added empty objects. We need to change this!
 
-        Thread thread = new Thread(new WebThread(WebThread.NEWEST));
+        Thread thread = new Thread(new RefreshThread(RefreshThread.NEWEST));
         thread.start();
         /*
         {

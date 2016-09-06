@@ -88,6 +88,11 @@ public class NewsTab{
         }
         return res;
     }
+
+    /**
+     *
+     * @return number of VISIBLE title
+     */
     public int getTitleNum(){
         return titleListVisible.size();
     }
@@ -148,6 +153,9 @@ public class NewsTab{
     public void setApp(NewsApp _app){
         app = _app;
     }
+    public NewsApp getApp(){
+        return app;
+    }
     public int getTabOrderFromVisibleOrder(int visibleOrder){
         String title = titleAt(visibleOrder);
         for(int i = 0; i < titleList.size(); ++i){
@@ -185,20 +193,63 @@ public class NewsTab{
         getResponse();
         if(obj != null){
             parseTab();
+            Cursor cursor;
+            String s;
             synchronized (app.database) {
-                app.database.execSQL("drop table tabs");
-                app.database.execSQL("create table tabs(" +
-                        "tab_order integer primary key, " +
-                        "codedTitle text, " +
-                        "title text, " +
-                        "watched integer)");
+                cursor = app.database.query("tabs", new String[]{"tab_order", "codedTitle", "title", "watched"}, null, null, null, null, "tab_order");
+                if(cursor.moveToFirst()){
+                    int index;
+                    for(int i = 0; i < cursor.getCount(); ++i){
+                        s = cursor.getString(2);
+                        index = titleList.indexOf(s);
+                        if(index == -1){
+                            app.database.execSQL("delete from tabs where title=?", new Object[]{s});
+                        }
+                        else{
+                            if(cursor.getInt(3)==0){
+                                titleListVisible.remove(s); //Avoid accessing by index
+                            }
+                        }
+                        cursor.move(1);
+                    }
+                    for(int i = 0; i < codedTitleList.size(); ++i){
+                        cursor = app.database.query("tabs", new String[]{"tab_order", "codedTitle", "title", "watched"}, "codedTitle=?", new String[]{codedTitleList.get(i)}, null, null, "tab_order");
+                        if(cursor.getCount()==0){
+                            //tab not recorded in database
+                            ContentValues value = new ContentValues();
+                            value.put("title", titleList.get(i));
+                            value.put("codedTitle", codedTitleList.get(i));
+                            value.put("tab_order", i);
+                            value.put("watched", 1);
+                            app.database.insert("tabs", null, value);
+                        }
+                    }
+                }
+                else{
+                    app.database.execSQL("drop table tabs");
+                    app.database.execSQL("create table tabs(" +
+                            "tab_order integer primary key, " +
+                            "codedTitle text, " +
+                            "title text, " +
+                            "watched integer)");
+                    for(int i = 0; i < titleList.size(); ++i){
+                        ContentValues value = new ContentValues();
+                        value.put("title", titleList.get(i));
+                        value.put("codedTitle", codedTitleList.get(i));
+                        value.put("tab_order", i);
+                        value.put("watched", titleListVisible.contains(titleList.get(i))?1:0);
+                        app.database.insert("tabs", null, value);
+                    }
+                }
                 for(int i = 0; i < titleList.size(); ++i){
-                    ContentValues value = new ContentValues();
-                    value.put("title", titleList.get(i));
-                    value.put("codedTitle", codedTitleList.get(i));
-                    value.put("tab_order", i);
-                    value.put("watched", titleListVisible.contains(titleList.get(i))?1:0);
-                    app.database.insert("tabs", null, value);
+                    app.database.execSQL("create table if not exists " + codedTitleAt(i)
+                            + " (news_id double primary key, " +
+                            "title text, " +
+                            "source_url text, " +
+                            "image_url text, " +
+                            "origin text, " +
+                            "category text, " +
+                            "favourite integer)");    //store news_id as double to ensure precision //7 columns
                 }
             }
             return true;
@@ -230,5 +281,9 @@ public class NewsTab{
         }
         else
             return false;
+    }
+    public String lookupCodedTitle(String title){
+        int index = titleList.indexOf(title);
+        return codedTitleAt(index);
     }
 }

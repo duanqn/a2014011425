@@ -17,7 +17,7 @@ public class NewsContent implements Parcelable{
     public String origin;
     public static final int FAVOURITE = 1;
     public static final int NOT_FAVOURITE = 0;
-    int favourite;  // =1 if favourite; =0 if not
+    public int favourite;  // =1 if favourite; =0 if not
     public NewsContent(){
         title = "一切反动派都是纸老虎";
         urlstr = "";
