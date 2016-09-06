@@ -108,4 +108,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public NewsTab getTabs(){
         return tabs;
     }
+
+    public boolean addTabBack(int position_in_unwatched){
+        boolean r = tabs.makeTabVisible(position_in_unwatched);
+        if(r){
+            this.notifyDataSetChanged();
+        }
+        return r;
+    }
 }

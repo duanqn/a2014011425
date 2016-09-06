@@ -51,6 +51,9 @@ public class NewsTab{
         tabReady = false;
     }
     public ArrayList<String> getTitle(){
+        return titleList;
+    }
+    public ArrayList<String> getVisibleTitle(){
         return titleListVisible;
     }
     public ArrayList<String> getCodedTitle(){
@@ -137,17 +140,28 @@ public class NewsTab{
         return -1;
     }
     public boolean makeTabInvisible(int position){
-        for(int i = 0; i < getTitleNum(); ++i){
-            System.out.println(titleAt(i));
-        }
         if(position >= 0 && position < titleList.size()) {
             titleListVisible.remove(position);
-            for(int i = 0; i < getTitleNum(); ++i){
-                System.out.println(titleAt(i));
-            }
             return true;
         }
         else
             return false;
+    }
+    public boolean makeTabVisible(int position_in_invisible){
+        int invisible_count = 0;
+        int visible_ptr = 0;
+        for(int i = 0; i < titleList.size(); ++i){
+            if((visible_ptr >= titleListVisible.size()) || !titleList.get(i).equals(titleListVisible.get(visible_ptr))){
+                // title is invisble
+                ++invisible_count;
+                if(invisible_count == position_in_invisible+1){
+                    titleListVisible.add(visible_ptr, titleList.get(i));
+                    return true;
+                }
+            }
+            else
+                ++visible_ptr;
+        }
+        return false;
     }
 }

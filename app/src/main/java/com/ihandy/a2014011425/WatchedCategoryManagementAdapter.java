@@ -1,12 +1,14 @@
 package com.ihandy.a2014011425;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,18 +16,19 @@ import android.widget.Toast;
 /**
  * Created by max on 16-9-5.
  */
-public class CategoryManagementAdapter extends BaseAdapter {
+public class WatchedCategoryManagementAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private ViewPagerAdapter targetAdapter;
     private NewsApp app;
     private NewsTab tabs;
     private Context context;
-    private CategoryManagementAdapter(Context _context){
+    public UnwatchedCategoryManagementAdapter cousins;
+    private WatchedCategoryManagementAdapter(Context _context){
         context = _context;
         inflater = LayoutInflater.from(context);
     }
-    public static CategoryManagementAdapter getNewInstance(Context context, NewsApp appPointer){
-        CategoryManagementAdapter adapter = new CategoryManagementAdapter(context);
+    public static WatchedCategoryManagementAdapter getNewInstance(Context context, NewsApp appPointer){
+        WatchedCategoryManagementAdapter adapter = new WatchedCategoryManagementAdapter(context);
         adapter.app = appPointer;
         adapter.tabs = appPointer.share_tabs;
         adapter.targetAdapter = appPointer.viewPagerAdapter;
@@ -86,15 +89,17 @@ public class CategoryManagementAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.list_item_category, null);
+            convertView = inflater.inflate(R.layout.list_item_category_watched, null);
         }
-        ImageButton imageButton = (ImageButton) convertView.findViewById(R.id.list_item_category_image);
+        final ImageButton imageButton = (ImageButton) convertView.findViewById(R.id.list_item_category_image);
         TextView textView = (TextView) convertView.findViewById(R.id.list_item_category_text);
         textView.setText(tabs.titleAt(position));
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 targetAdapter.removeTab(position);
+                notifyDataSetChanged();
+                cousins.notifyDataSetChanged();
                 Toast.makeText(context, "Clicked!", Toast.LENGTH_SHORT).show();
             }
         });
