@@ -29,6 +29,15 @@ public class NewsApp extends Application{
                     "codedTitle text, " +
                     "title text, " +
                     "watched integer)");
+            database.execSQL("create table if not exists favourite_news(" +
+                    "news_id integer primary key, " +
+                    "codedTab text, " +
+                    "title text, " +
+                    "source_url text, " +
+                    "image_url text, " +
+                    "origin text, " +
+                    "category text, " +
+                    "content text)");
         }
     }
     public void setGlobalViewPagerAdapter(ViewPagerAdapter v){
@@ -45,5 +54,26 @@ public class NewsApp extends Application{
             }
         }
         return false;
+    }
+
+    /**
+     * Downloads the target page and store in database
+     * @param newsid
+     * @param url
+     */
+    public void downloadPage(long newsid, String url){
+        synchronized (database){
+
+        }
+    }
+
+    /**
+     * Downloads the target image and store in database
+     * @param codedTab
+     * @param newsid
+     * @param url
+     */
+    public void downloadPic(String codedTab, long newsid, String url){
+
     }
 }

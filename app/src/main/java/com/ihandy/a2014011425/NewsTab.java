@@ -261,25 +261,25 @@ public class NewsTab{
         Cursor cursor;
         synchronized (app.database) {
             cursor = app.database.query("tabs", new String[]{"tab_order", "codedTitle", "title", "watched"}, null, null, null, null, "tab_order");
-        }
-        String s;
-        int t;
-        if(cursor.moveToFirst()){
-            for(int i = 0; i < cursor.getCount(); ++i){
-                s = cursor.getString(1);    //0 for tab_order
-                codedTitleList.add(s);
-                s = cursor.getString(2);
-                titleList.add(s);
-                t = cursor.getInt(3);
-                if(t == 1)
-                    titleListVisible.add(s);
-                cursor.move(1);
+            String s;
+            int t;
+            if(cursor.moveToFirst()){
+                for(int i = 0; i < cursor.getCount(); ++i){
+                    s = cursor.getString(1);    //0 for tab_order
+                    codedTitleList.add(s);
+                    s = cursor.getString(2);
+                    titleList.add(s);
+                    t = cursor.getInt(3);
+                    if(t == 1)
+                        titleListVisible.add(s);
+                    cursor.move(1);
+                }
+                cursor.close();
+                return tabReady = true;
             }
-            cursor.close();
-            return tabReady = true;
+            else
+                return false;
         }
-        else
-            return false;
     }
     public String lookupCodedTitle(String title){
         int index = titleList.indexOf(title);

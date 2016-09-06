@@ -346,7 +346,7 @@ public class RecyclerViewFragment extends Fragment {
         //Use this now
         mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
 
-        mAdapter = new TestRecyclerViewAdapter(getActivity(), mContentItems);
+        mAdapter = new TestRecyclerViewAdapter(getActivity(), mContentItems, tab_order);
 
         //mAdapter = new RecyclerViewMaterialAdapter();
         mRecyclerView.setAdapter(mAdapter);

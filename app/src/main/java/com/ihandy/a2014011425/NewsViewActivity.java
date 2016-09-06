@@ -1,6 +1,8 @@
 package com.ihandy.a2014011425;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -35,8 +37,11 @@ public class NewsViewActivity extends Activity {
     ImageButton button_back;
     ImageButton button_favourite;
     int net_access_count;
+    int tab_order;
+    boolean favourite_changed;
     public NewsViewActivity(){
         net_access_count = 0;
+        favourite_changed = false;
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +50,18 @@ public class NewsViewActivity extends Activity {
         setContentView(R.layout.activity_news_view);
         Intent intent = getIntent();
         pageContent = intent.getParcelableExtra("content");
+        tab_order = intent.getIntExtra("order", -1);
         String newsurl = pageContent.urlstr;
 
+        NewsApp app = (NewsApp)getApplication();
+        synchronized (app.database){
+            if(app.database.query("favourite_news", new String[]{"news_id"}, "news_id=?",
+                    new String[]{String.format(Locale.getDefault(), "%d", pageContent.newsid)}, null, null, "news_id").getCount() == 0){
+                pageContent.favourite = NewsContent.NOT_FAVOURITE;
+            }
+            else
+                pageContent.favourite = NewsContent.FAVOURITE;
+        }
 
         webView = (WebView)findViewById(R.id.news_view_webView);
         webView.setVisibility(View.INVISIBLE);
@@ -104,6 +119,14 @@ public class NewsViewActivity extends Activity {
             }
         });
         button_favourite = (ImageButton)findViewById(R.id.actionbar_news_view_favouritebtn);
+        switch(pageContent.favourite){
+            case NewsContent.FAVOURITE:
+                button_favourite.setImageDrawable(getResources().getDrawable(R.drawable.red_heart));
+                break;
+            case NewsContent.NOT_FAVOURITE:
+                button_favourite.setImageDrawable(getResources().getDrawable(R.drawable.blue_favorite));
+                break;
+        }
         button_favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,31 +144,10 @@ public class NewsViewActivity extends Activity {
                         Toast.makeText(getApplicationContext(), "Added to favourite list", Toast.LENGTH_SHORT).show();
                         break;
                 }
+                favourite_changed = !favourite_changed;
             }
         });
-        /*
-        newsFetcher = new Handler(){
-            @Override
-            public void handleMessage(Message msg){
-                switch(msg.what){
-                    case 0:
-                        TextView content = (TextView)findViewById(R.id.news_view_text);
-                        content.setText((String)msg.obj);
-                        break;
-                }
-            }
-        };
-        Thread thread = new Thread(){
-            public void run(){
-                Message msg = new Message();
-                msg.what = 0;
-                msg.obj = getResponse();
-                newsFetcher.sendMessage(msg);
-            }
-        };
-        thread.start();
-        */
-        //content.setText(getResponse());
+
     }
 
 
@@ -186,5 +188,34 @@ public class NewsViewActivity extends Activity {
             }
         }
         return res;
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(favourite_changed){
+            NewsApp app = (NewsApp) getApplication();
+            synchronized (app.database){
+                String label = app.share_tabs.codedTitleAt(tab_order);
+                app.database.execSQL("update "+label+" set favourite="+pageContent.favourite+" where news_id=" + pageContent.newsid);
+
+                //TODO: add to a separate table
+                if(pageContent.favourite == NewsContent.FAVOURITE){
+                    ContentValues values = new ContentValues();
+                    values.put("codedTab", label);
+                    values.put("news_id", pageContent.newsid);
+                    values.put("title", pageContent.title);
+                    values.put("source_url", pageContent.urlstr);
+                    values.put("image_url", pageContent.imageurl);
+                    values.put("origin", pageContent.origin);
+                    values.put("category", pageContent.category);
+                    app.database.insert("favourite_news", null, values);
+                    app.downloadPage(pageContent.newsid, pageContent.urlstr);
+                }
+                else{
+                    app.database.execSQL("delete from favourite_news where news_id="+pageContent.newsid);
+                }
+            }
+        }
+        super.onDestroy();
     }
 }

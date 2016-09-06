@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/favourite_item"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="@dimen/cardMarginVertical"
+        android:layout_marginLeft="@dimen/cardMarginHorizontal"
+        android:layout_marginRight="@dimen/cardMarginHorizontal"
+        android:layout_marginTop="@dimen/cardMarginVertical"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="2dp"
+        app:cardPreventCornerOverlap="false"
+        app:contentPadding="10dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/favourite_item_pic"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_below="@id/favourite_item_pic"
+                android:layout_marginTop="10dp"
+                android:layout_height="65dp"
+                android:textColor="@color/black"
+                android:id="@+id/favourite_item_title"
+                android:lines="3"
+                android:ellipsize="end"
+                android:textSize="16sp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="right">
+                <ImageButton
+                    android:background="@color/transparent"
+                    android:id="@+id/favourite_item_favouritebtn"
+                    android:layout_gravity="end"
+                    android:layout_margin="5dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/red_heart"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

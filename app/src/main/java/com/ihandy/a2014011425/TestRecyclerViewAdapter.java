@@ -39,11 +39,13 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     Handler imgLoadNotifier;
     static final int TYPE_HEADER = 0;
     static final int TYPE_CELL = 1;
+    private int tab_order;
     Activity context;
 
-    public TestRecyclerViewAdapter(Activity _context, List<NewsContent> contents) {
+    public TestRecyclerViewAdapter(Activity _context, List<NewsContent> contents, int order) {
         context = _context;
         this.contents = contents;
+        tab_order = order;
         super.setHasStableIds(true);
     }
 
@@ -176,6 +178,7 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                 if(c.urlstr!=null) {
                     Intent intent = new Intent();
                     intent.putExtra("content", c);
+                    intent.putExtra("order", tab_order);
                     intent.setClass(context.getApplicationContext(), NewsViewActivity.class);
                     context.startActivity(intent);
                 }
