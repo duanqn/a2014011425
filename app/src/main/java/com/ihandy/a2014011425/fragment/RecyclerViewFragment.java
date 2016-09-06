@@ -99,7 +99,8 @@ public class RecyclerViewFragment extends Fragment {
                                     content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
                                 }
                                 content.origin = news.getString("origin");
-                                content.urlstr = news.getJSONObject("source").getString("url");
+                                if(news.getJSONObject("source").has("url"))
+                                    content.urlstr = news.getJSONObject("source").getString("url");
                                 boolean crash = false;
                                 //TODO: Insertion Sort
                                 int j;

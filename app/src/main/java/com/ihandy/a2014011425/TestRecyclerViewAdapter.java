@@ -157,6 +157,7 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                                     cholder.detail.setText(c.origin);
                                     cholder.img.setImageBitmap((Bitmap)msg.obj);
                                     cholder.img.setVisibility(View.VISIBLE);
+                                    cholder.img.invalidate();
                                     break;
                                 case 1:
                                     cholder.detail.setText((String)msg.obj);
@@ -172,10 +173,12 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         cholder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.putExtra("content", c);
-                intent.setClass(context.getApplicationContext(), NewsViewActivity.class);
-                context.startActivity(intent);
+                if(c.urlstr!=null) {
+                    Intent intent = new Intent();
+                    intent.putExtra("content", c);
+                    intent.setClass(context.getApplicationContext(), NewsViewActivity.class);
+                    context.startActivity(intent);
+                }
             }
         });
     }

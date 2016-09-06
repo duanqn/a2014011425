@@ -4,6 +4,7 @@ package com.ihandy.a2014011425;
  * Created by max on 16-8-27.
  */
 import android.app.FragmentTransaction;
+import android.database.Cursor;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -37,12 +38,14 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 }
             }
         };
+
+    }
+    public void LoadTab(){
         Thread thread = new Thread(){
             @Override
             public void run(){
-                tabs.getResponse();
-                tabs.parseTab();
-                ViewPagerAdapter.this.handler.sendEmptyMessage(NEWS_TAB_UPDATE);
+                if(tabs.getTab())
+                    ViewPagerAdapter.this.handler.sendEmptyMessage(NEWS_TAB_UPDATE);
             }
         };
         thread.start();
@@ -57,6 +60,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public static ViewPagerAdapter getNewInstance(NewsApp appPointer, FragmentManager fm){
         ViewPagerAdapter r = new ViewPagerAdapter(fm);
         r.setApp(appPointer);
+        r.LoadTab();
         r.getGlobalTabs();
         return r;
     }

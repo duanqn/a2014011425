@@ -100,7 +100,6 @@ public class WatchedCategoryManagementAdapter extends BaseAdapter {
                 targetAdapter.removeTab(position);
                 notifyDataSetChanged();
                 cousins.notifyDataSetChanged();
-                Toast.makeText(context, "Clicked!", Toast.LENGTH_SHORT).show();
             }
         });
         return convertView;

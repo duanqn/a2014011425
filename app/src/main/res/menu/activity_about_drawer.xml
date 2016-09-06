@@ -21,6 +21,10 @@
         android:id="@+id/nav_about_me"
         android:icon="@drawable/about_me"
         android:title="About me" />
+    <item
+        android:id="@+id/nav_clear"
+        android:icon="@drawable/ic_menu_manage"
+        android:title="Clear data" />
     <!--
     <item android:title="Communicate">
         <menu>

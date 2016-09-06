@@ -112,7 +112,6 @@ public class UnwatchedCategoryManagementAdapter extends BaseAdapter {
                 targetAdapter.addTabBack(position);
                 notifyDataSetChanged();
                 cousins.notifyDataSetChanged();
-                Toast.makeText(context, "Clicked!", Toast.LENGTH_SHORT).show();
             }
         });
         return convertView;

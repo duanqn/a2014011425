@@ -41,7 +41,7 @@ public class MainActivity extends DrawerActivity {
         if(toolbar != null){
             setSupportActionBar(toolbar);
         }
-        NewsApp mApp = (NewsApp) getApplication();
+        final NewsApp mApp = (NewsApp) getApplication();
         mAdapter = ViewPagerAdapter.getNewInstance(mApp, getSupportFragmentManager());
         mApp.setGlobalViewPagerAdapter(mAdapter);
         mViewPager.getViewPager().setAdapter(mAdapter);
@@ -125,6 +125,9 @@ public class MainActivity extends DrawerActivity {
                         intent = new Intent();
                         intent.setClass(MainActivity.this, FavouriteActivity.class);
                         MainActivity.this.startActivity(intent);
+                        break;
+                    case R.id.nav_clear:
+                        //drop all tables!
                         break;
                 }
 
