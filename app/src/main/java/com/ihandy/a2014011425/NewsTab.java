@@ -123,7 +123,6 @@ public class NewsTab{
         }
         catch(SocketTimeoutException e){
             System.out.println(e);
-            Toast.makeText(app.getBaseContext(), "Bad network", Toast.LENGTH_SHORT).show();
         }
         catch(IOException e){
             System.out.println(e);
@@ -243,7 +242,7 @@ public class NewsTab{
                 }
                 for(int i = 0; i < titleList.size(); ++i){
                     app.database.execSQL("create table if not exists " + codedTitleAt(i)
-                            + " (news_id double primary key, " +
+                            + " (news_id text primary key, " +
                             "title text, " +
                             "source_url text, " +
                             "image_url text, " +

@@ -177,10 +177,10 @@ public class RecyclerViewFragment extends Fragment {
                 for(int i = 0; i < mContentItems.size(); ++i){
                     current = mContentItems.get(i);
                     cursor = app.database.query(label, new String[]{"news_id", "title", "source_url", "image_url", "origin", "category", "favourite"},
-                            "news_id=?", new String[]{String.format(Locale.getDefault(), "%f", (double)current.newsid)}, null, null, "news_id");
+                            "news_id=?", new String[]{String.format(Locale.getDefault(), "%d", current.newsid)}, null, null, "news_id");
                     if(cursor.getCount() == 0){
                         ContentValues values = new ContentValues();
-                        values.put("news_id", (double)current.newsid);
+                        values.put("news_id", current.newsid);
                         values.put("title", current.title);
                         values.put("source_url", current.urlstr);
                         values.put("image_url", current.imageurl);
@@ -197,7 +197,7 @@ public class RecyclerViewFragment extends Fragment {
                         values.put("origin", current.origin);
                         values.put("category", current.category);
                         values.put("favourite", current.favourite);
-                        app.database.update(label, values, "news_id=?", new String[]{String.format(Locale.getDefault(), "%f", (double)current.newsid)});
+                        app.database.update(label, values, "news_id=?", new String[]{String.format(Locale.getDefault(), "%d", current.newsid)});
                     }
                 }
             }
@@ -206,8 +206,8 @@ public class RecyclerViewFragment extends Fragment {
 
 
     class NewThread extends RefreshThread{
-        public NewThread (long max_id){
-            super(max_id);
+        public NewThread (){
+            super(RefreshThread.NEWEST);
         }
         @Override
         public void run(){
@@ -224,13 +224,13 @@ public class RecyclerViewFragment extends Fragment {
                 // No results from network, try using database
                 Cursor cursor;
                 synchronized (app.database){
-                    final String label = tabInfo.lookupCodedTitle(tabInfo.titleAt(tab_order));
+                    final String label = tabInfo.codedTitleAt(tab_order);
                     cursor = app.database.query(label, new String[]{"news_id", "title", "source_url", "image_url", "origin", "category", "favourite"},
                             null, null, null, null, "news_id");
                     if(cursor.moveToFirst()){
                         for(int i = 0; i < cursor.getCount(); ++i){
                             content = new NewsContent();
-                            content.newsid = (long) cursor.getDouble(0);
+                            content.newsid = cursor.getLong(0);
                             content.title = cursor.getString(1);
                             content.urlstr = cursor.getString(2);
                             content.imageurl = cursor.getString(3);
@@ -250,8 +250,10 @@ public class RecyclerViewFragment extends Fragment {
                             }
                             if (!crash)
                                 mContentItems.add(j, content);
+                            cursor.move(1);
                         }
                         writeContent();
+                        mhandler.sendEmptyMessage(0);
                     }
                     else{
                         return;
@@ -404,7 +406,7 @@ public class RecyclerViewFragment extends Fragment {
 
         //TODO: He added empty objects. We need to change this!
 
-        Thread thread = new Thread(new RefreshThread(RefreshThread.NEWEST));
+        Thread thread = new Thread(new NewThread());
         thread.start();
         /*
         {
