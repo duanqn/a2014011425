@@ -248,6 +248,7 @@ public class NewsTab{
                             "image_url text, " +
                             "origin text, " +
                             "category text, " +
+                            "image_store blob, "+
                             "favourite integer)");    //store news_id as double to ensure precision //7 columns
                 }
             }

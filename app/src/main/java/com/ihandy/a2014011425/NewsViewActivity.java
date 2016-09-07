@@ -3,6 +3,7 @@ package com.ihandy.a2014011425;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -23,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -208,6 +210,11 @@ public class NewsViewActivity extends Activity {
                     values.put("image_url", pageContent.imageurl);
                     values.put("origin", pageContent.origin);
                     values.put("category", pageContent.category);
+                    if(pageContent.pic!=null) {
+                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        pageContent.pic.compress(Bitmap.CompressFormat.PNG, 100, os);
+                        values.put("image_store", os.toByteArray());
+                    }
                     app.database.insert("favourite_news", null, values);
                     app.downloadPage(pageContent.newsid, pageContent.urlstr);
                 }

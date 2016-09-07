@@ -21,30 +21,32 @@ import java.util.ArrayList;
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     final int NEWS_TAB_UPDATE = 1;
     private NewsTab tabs;
-    Handler handler;
     private NewsApp app;
+    private Handler mhandler;
+    boolean notified;
 
     private ViewPagerAdapter(FragmentManager fm) {
         super(fm);
-        handler = new Handler(){
-            @Override
+        notified = false;
+        mhandler = new Handler(){
             public void handleMessage(Message msg){
-                switch(msg.what){
+                switch (msg.what){
                     case NEWS_TAB_UPDATE:
                         ViewPagerAdapter.this.notifyDataSetChanged();
                         break;
-                    default:
                 }
             }
         };
-
     }
-    public void LoadTab(){
+    public synchronized void LoadTab(){
+        final int old_count = getCount();
+        tabs = app.share_tabs;
         Thread thread = new Thread(){
             @Override
             public void run(){
-                if(tabs.getTab())
-                    ViewPagerAdapter.this.handler.sendEmptyMessage(NEWS_TAB_UPDATE);
+                tabs.getTab();
+                if(getCount()!=old_count)
+                    mhandler.sendEmptyMessage(NEWS_TAB_UPDATE);
             }
         };
         thread.start();
@@ -53,13 +55,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public void setApp(NewsApp appPointer){
         app = appPointer;
     }
-    public void getGlobalTabs(){
-        tabs = app.share_tabs;
-    }
     public static ViewPagerAdapter getNewInstance(NewsApp appPointer, FragmentManager fm){
         ViewPagerAdapter r = new ViewPagerAdapter(fm);
         r.setApp(appPointer);
-        r.getGlobalTabs();
         r.LoadTab();
         return r;
     }

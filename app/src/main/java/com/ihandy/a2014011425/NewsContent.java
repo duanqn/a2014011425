@@ -1,8 +1,12 @@
 package com.ihandy.a2014011425;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Created by max on 16-9-2.
@@ -18,6 +22,7 @@ public class NewsContent implements Parcelable{
     public static final int FAVOURITE = 1;
     public static final int NOT_FAVOURITE = 0;
     public int favourite;  // =1 if favourite; =0 if not
+    public Bitmap pic = null;
     public NewsContent(){
         title = "一切反动派都是纸老虎";
         urlstr = "";
@@ -48,6 +53,15 @@ public class NewsContent implements Parcelable{
         parcel.writeString(category);
         parcel.writeString(origin);
         parcel.writeInt(favourite);
+        if(pic!=null){
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            pic.compress(Bitmap.CompressFormat.PNG, 100, os);
+            byte[] out = os.toByteArray();
+            parcel.writeInt(out.length);
+            parcel.writeByteArray(out);
+        }
+        else
+            parcel.writeInt(0);
     }
     public static final Parcelable.Creator<NewsContent> CREATOR = new Creator<NewsContent>() {
         @Override
@@ -60,6 +74,12 @@ public class NewsContent implements Parcelable{
             res.category = source.readString();
             res.origin = source.readString();
             res.favourite = source.readInt();
+            int len = source.readInt();
+            if(len > 0) {
+                byte[] in = new byte[len];
+                source.readByteArray(in);
+                res.pic = BitmapFactory.decodeByteArray(in, 0, len);
+            }
             return res;
         }
 

@@ -18,27 +18,6 @@ public class NewsApp extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        share_tabs = new NewsTab();
-        share_tabs.setApp(this);
-        File path = getApplicationContext().getDatabasePath("news_master_database.db");
-        database = SQLiteDatabase.openOrCreateDatabase(path, null);
-        synchronized (database) {
-            //add table "tabs"
-            database.execSQL("create table if not exists tabs(" +
-                    "tab_order integer primary key, " +
-                    "codedTitle text, " +
-                    "title text, " +
-                    "watched integer)");
-            database.execSQL("create table if not exists favourite_news(" +
-                    "news_id integer primary key, " +
-                    "codedTab text, " +
-                    "title text, " +
-                    "source_url text, " +
-                    "image_url text, " +
-                    "origin text, " +
-                    "category text, " +
-                    "content text)");
-        }
     }
     public void setGlobalViewPagerAdapter(ViewPagerAdapter v){
         viewPagerAdapter = v;
@@ -62,9 +41,6 @@ public class NewsApp extends Application{
      * @param url
      */
     public void downloadPage(long newsid, String url){
-        synchronized (database){
-
-        }
     }
 
     /**
@@ -76,4 +52,5 @@ public class NewsApp extends Application{
     public void downloadPic(String codedTab, long newsid, String url){
 
     }
+
 }

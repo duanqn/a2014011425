@@ -79,7 +79,6 @@ public class RecyclerViewFragment extends Fragment {
             else {
                 synchronized (mContentItems) {
                     if (!obj.has("data")) {
-
                     } else {
                         try {
                             obj = obj.getJSONObject("data");
@@ -94,8 +93,11 @@ public class RecyclerViewFragment extends Fragment {
                                     content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
                                 }
                                 content.origin = news.getString("origin");
-                                if(news.getJSONObject("source").has("url"))
+                                try {
                                     content.urlstr = news.getJSONObject("source").getString("url");
+                                }catch(JSONException e){
+                                    content.urlstr = null;
+                                }
                                 boolean crash = false;
                                 int j;
                                 for (j = 0; j < mContentItems.size(); ++j) {
@@ -278,8 +280,12 @@ public class RecyclerViewFragment extends Fragment {
                                     content.imageurl = news.getJSONArray("imgs").getJSONObject(0).getString("url");
                                 }
                                 content.origin = news.getString("origin");
-                                if(news.getJSONObject("source").has("url"))
+                                try {
                                     content.urlstr = news.getJSONObject("source").getString("url");
+                                }
+                                catch (JSONException e){
+                                    content.urlstr = null;
+                                }
                                 boolean crash = false;
                                 int j;
                                 for (j = 0; j < mContentItems.size(); ++j) {

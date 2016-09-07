@@ -3,6 +3,7 @@ package com.ihandy.a2014011425;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 
 import com.ihandy.a2014011425.materialviewpager.MaterialViewPager;
 import com.ihandy.a2014011425.materialviewpager.header.HeaderDesign;
+
+import java.io.File;
 
 
 public class MainActivity extends DrawerActivity {
@@ -43,6 +46,32 @@ public class MainActivity extends DrawerActivity {
             setSupportActionBar(toolbar);
         }
         final NewsApp mApp = (NewsApp) getApplication();
+        mApp.share_tabs = new NewsTab();
+        mApp.share_tabs.setApp(mApp);
+
+        File path = getApplicationContext().getDatabasePath("news_center_database.db");
+        if(!path.getParentFile().exists())
+            path.getParentFile().mkdirs();
+        mApp.database = SQLiteDatabase.openOrCreateDatabase(path, null);
+
+        synchronized (mApp.database) {
+            //add table "tabs"
+            mApp.database.execSQL("create table if not exists tabs(" +
+                    "tab_order integer primary key, " +
+                    "codedTitle text, " +
+                    "title text, " +
+                    "watched integer)");
+            mApp.database.execSQL("create table if not exists favourite_news(" +
+                    "news_id integer primary key, " +
+                    "codedTab text, " +
+                    "title text, " +
+                    "source_url text, " +
+                    "image_url text, " +
+                    "origin text, " +
+                    "category text, " +
+                    "image_store blob, "+
+                    "content text)");
+        }
         mAdapter = ViewPagerAdapter.getNewInstance(mApp, getSupportFragmentManager());
         mApp.setGlobalViewPagerAdapter(mAdapter);
         mViewPager.getViewPager().setAdapter(mAdapter);
@@ -201,6 +230,22 @@ public class MainActivity extends DrawerActivity {
         */
     }
 
+    @Override
+    protected void onDestroy() {
+        NewsApp app = (NewsApp)getApplication();
+        synchronized (app.database){
+            app.database.close();
+        }
+        super.onDestroy();
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
 }

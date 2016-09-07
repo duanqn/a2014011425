@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -87,6 +88,10 @@ public class FavouriteAdapter extends BaseAdapter {
         category.setText(mContentItems.get(position).category);
         TextView origin = (TextView) convertView.findViewById(R.id.favourite_item_origin);
         origin.setText(mContentItems.get(position).origin);
+        ImageView img = (ImageView) convertView.findViewById(R.id.favourite_item_pic);
+        if(mContentItems.get(position).pic!=null){
+            img.setImageBitmap(mContentItems.get(position).pic);
+        }
         final ImageButton favourite = (ImageButton)convertView.findViewById(R.id.favourite_item_favouritebtn);
         favourite.setOnClickListener(new View.OnClickListener() {
             @Override
