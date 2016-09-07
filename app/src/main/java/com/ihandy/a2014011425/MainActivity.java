@@ -38,6 +38,10 @@ public class MainActivity extends DrawerActivity {
         setContentView(R.layout.activity_main);
 
         setTitle("");   //No title
+        final NewsApp mApp = (NewsApp) getApplication();
+        mApp.share_tabs = new NewsTab();
+        mApp.share_tabs.setApp(mApp);
+        mAdapter = ViewPagerAdapter.getNewInstance(mApp, getSupportFragmentManager());
 
         mViewPager = (MaterialViewPager)findViewById(R.id.materialViewPager);
         toolbar = mViewPager.getToolbar();
@@ -45,9 +49,7 @@ public class MainActivity extends DrawerActivity {
         if(toolbar != null){
             setSupportActionBar(toolbar);
         }
-        final NewsApp mApp = (NewsApp) getApplication();
-        mApp.share_tabs = new NewsTab();
-        mApp.share_tabs.setApp(mApp);
+
 
         File path = getApplicationContext().getDatabasePath("news_center_database.db");
         if(!path.getParentFile().exists())
@@ -72,7 +74,7 @@ public class MainActivity extends DrawerActivity {
                     "image_store blob, "+
                     "content text)");
         }
-        mAdapter = ViewPagerAdapter.getNewInstance(mApp, getSupportFragmentManager());
+
         mApp.setGlobalViewPagerAdapter(mAdapter);
         mViewPager.getViewPager().setAdapter(mAdapter);
         tabs = mAdapter.getTabs();

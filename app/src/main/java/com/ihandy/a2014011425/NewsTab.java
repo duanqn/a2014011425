@@ -59,6 +59,13 @@ public class NewsTab{
     }
     NewsTab(){
         tabReady = false;
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                getTab();
+            }
+        };
+        thread.start();
     }
     public ArrayList<String> getTitle(){
         return titleList;

@@ -8,7 +8,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="段清楠"
         android:largeHeap="true"
         android:supportsRtl="true"
         android:name=".NewsApp"

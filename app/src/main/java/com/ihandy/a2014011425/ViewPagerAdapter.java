@@ -24,10 +24,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private NewsApp app;
     private Handler mhandler;
     boolean notified;
+    int lastnum;
 
     private ViewPagerAdapter(FragmentManager fm) {
         super(fm);
         notified = false;
+        lastnum = 0;
         mhandler = new Handler(){
             public void handleMessage(Message msg){
                 switch (msg.what){
@@ -38,27 +40,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             }
         };
     }
-    public synchronized void LoadTab(){
-        final int old_count = getCount();
-        tabs = app.share_tabs;
-        Thread thread = new Thread(){
-            @Override
-            public void run(){
-                tabs.getTab();
-                if(getCount()!=old_count)
-                    mhandler.sendEmptyMessage(NEWS_TAB_UPDATE);
-            }
-        };
-        thread.start();
-    }
 
-    public void setApp(NewsApp appPointer){
-        app = appPointer;
-    }
+
     public static ViewPagerAdapter getNewInstance(NewsApp appPointer, FragmentManager fm){
         ViewPagerAdapter r = new ViewPagerAdapter(fm);
-        r.setApp(appPointer);
-        r.LoadTab();
+        r.app = appPointer;
+        r.tabs = appPointer.share_tabs;
         return r;
     }
 
@@ -77,10 +64,14 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     // page个数设置
     @Override
     public int getCount() {
-        if(tabs != null)
-            return tabs.getTitleNum();
-        else
-            return 0;
+            int res;
+            try {
+                while (tabs.tabReady == false) {
+                    Thread.sleep(40);
+                }
+            }catch(InterruptedException e){}
+            res = tabs.getTitleNum();
+            return res;
     }
 
     //设置pageTitle， 我们只需重载此方法即可
