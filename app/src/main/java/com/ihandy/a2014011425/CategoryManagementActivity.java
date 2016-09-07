@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 public class CategoryManagementActivity extends Activity {
@@ -22,6 +24,13 @@ public class CategoryManagementActivity extends Activity {
         UnwatchedCategoryManagementAdapter mAdapter2 = UnwatchedCategoryManagementAdapter.getNewInstance(this, (NewsApp)getApplication());
         mAdapter2.bind(mAdapter1);
         listdown.setAdapter(mAdapter2);
+        ImageButton button_back = (ImageButton)findViewById(R.id.actionbar_category_management_backbtn);
+        button_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override

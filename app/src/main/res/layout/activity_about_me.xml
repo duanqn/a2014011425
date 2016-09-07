@@ -24,7 +24,7 @@
     <ImageView
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/blue_favorite"
+        android:src="@drawable/img01"
         android:layout_centerHorizontal="true"
         android:layout_above="@id/about_me_name"/>
 </RelativeLayout>

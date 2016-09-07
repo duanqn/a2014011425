@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -76,13 +77,35 @@ public class FavouriteAdapter extends BaseAdapter {
      * @return A View corresponding to the data at the specified position.
      */
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.list_item_card_favourite, null);
-            return convertView;
         }
         TextView textView = (TextView) convertView.findViewById(R.id.favourite_item_title);
         textView.setText(mContentItems.get(position).title);
+        TextView category = (TextView) convertView.findViewById(R.id.favourite_item_category);
+        category.setText(mContentItems.get(position).category);
+        TextView origin = (TextView) convertView.findViewById(R.id.favourite_item_origin);
+        origin.setText(mContentItems.get(position).origin);
+        final ImageButton favourite = (ImageButton)convertView.findViewById(R.id.favourite_item_favouritebtn);
+        favourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageButton btn = (ImageButton)v;
+                switch (mContentItems.get(position).favourite){
+                    case NewsContent.FAVOURITE:
+                        btn.setImageDrawable(context.getResources().getDrawable(R.drawable.blue_favorite));
+                        mContentItems.get(position).favourite = NewsContent.NOT_FAVOURITE;
+                        btn.invalidate();
+                        break;
+                    case NewsContent.NOT_FAVOURITE:
+                        btn.setImageDrawable(context.getResources().getDrawable(R.drawable.red_heart));
+                        mContentItems.get(position).favourite = NewsContent.FAVOURITE;
+                        btn.invalidate();
+                        break;
+                }
+            }
+        });
         return convertView;
     }
 }

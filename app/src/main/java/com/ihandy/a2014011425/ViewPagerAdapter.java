@@ -23,7 +23,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private NewsTab tabs;
     Handler handler;
     private NewsApp app;
-    private static final int MAX_TAB=10;    //Ugly coding and we hope ta won't find this
 
     private ViewPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -60,8 +59,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public static ViewPagerAdapter getNewInstance(NewsApp appPointer, FragmentManager fm){
         ViewPagerAdapter r = new ViewPagerAdapter(fm);
         r.setApp(appPointer);
-        r.LoadTab();
         r.getGlobalTabs();
+        r.LoadTab();
         return r;
     }
 

@@ -10,16 +10,20 @@ import java.util.List;
 
 public class FavouriteActivity extends Activity {
     FavouriteAdapter mAdapter;
+    ArrayList<NewsContent> mContentItems;
+    ArrayList<String> tabName;
+    NewsApp app;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
         ListView list = (ListView)findViewById(R.id.favourite_list);
 
-        NewsApp app = (NewsApp)getApplication();
-        ArrayList<NewsContent> favouriteList = new ArrayList<>();
+        app = (NewsApp)getApplication();
+        mContentItems = new ArrayList<>();
+        tabName = new ArrayList<>();
         synchronized (app.database){
-            Cursor cursor = app.database.query("favourite_news", new String[]{"news_id", "title", "source_url", "image_url", "origin", "category"},
+            Cursor cursor = app.database.query("favourite_news", new String[]{"news_id", "title", "source_url", "image_url", "origin", "category", "codedTab"},
                      null, null, null, null, "news_id");
             cursor.moveToFirst();
             NewsContent current;
@@ -32,11 +36,25 @@ public class FavouriteActivity extends Activity {
                 current.origin = cursor.getString(4);
                 current.category = cursor.getString(5);
                 current.favourite = NewsContent.FAVOURITE;
-                favouriteList.add(current);
+                mContentItems.add(current);
+                tabName.add(cursor.getString(6));
+                cursor.move(1);
             }
         }
-        mAdapter = FavouriteAdapter.getNewInstance(this, favouriteList);
+        mAdapter = FavouriteAdapter.getNewInstance(this, mContentItems);
         list.setAdapter(mAdapter);
     }
 
+    @Override
+    protected void onDestroy() {
+        for(int i = 0; i < mContentItems.size(); ++i){
+            if(mContentItems.get(i).favourite == NewsContent.NOT_FAVOURITE){
+                synchronized (app.database){
+                    app.database.execSQL("delete from favourite_news where news_id="+mContentItems.get(i).newsid);
+                    app.database.execSQL("update "+tabName.get(i)+" set favourite=0 where news_id="+mContentItems.get(i).newsid);
+                }
+            }
+        }
+        super.onDestroy();
+    }
 }

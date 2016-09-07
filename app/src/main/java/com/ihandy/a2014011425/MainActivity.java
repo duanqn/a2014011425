@@ -138,6 +138,7 @@ public class MainActivity extends DrawerActivity {
                                 cursor.move(1);
                             }
                             mApp.database.execSQL("drop table tabs");
+                            mApp.database.execSQL("drop table favourite_news");
                             finish();
                         }
                         break;

@@ -36,7 +36,6 @@ import java.net.URL;
 public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     List<NewsContent> contents;
-    Handler imgLoadNotifier;
     static final int TYPE_HEADER = 0;
     static final int TYPE_CELL = 1;
     private int tab_order;
@@ -93,7 +92,7 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final CardViewHolder cholder = (CardViewHolder)holder;
         final NewsContent c = contents.get(position);
         Thread loadThread;
@@ -104,6 +103,23 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                 cholder.title.setText(c.title);
                 cholder.detail.setText(c.origin);
                 if(c.imageurl != null){
+                    final Handler imgLoadNotifier = new Handler(){
+                        @Override
+                        public void handleMessage(Message msg){
+                            switch (msg.what){
+                                case 0:
+                                    cholder.detail.setText(c.origin);
+                                    cholder.img.setImageBitmap((Bitmap)msg.obj);
+                                    cholder.img.setVisibility(View.VISIBLE);
+                                    cholder.img.invalidate();
+                                    break;
+                                case 1:
+                                    cholder.detail.setText((String)msg.obj);
+                                    cholder.img.setVisibility(View.INVISIBLE);
+                                    break;
+                            }
+                        }
+                    };
                     loadThread = new Thread(){
                         @Override
                         public void run(){
@@ -112,7 +128,7 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                             Message msg = new Message();
 
                             msg.what = 1;
-                            msg.obj = title;
+                            msg.obj = String.format("%d", position);
                             imgLoadNotifier.sendMessage(msg);
                             Bitmap bitmap = getHttpBitmap(c.imageurl);
                             Message msg2 = new Message();
@@ -149,23 +165,6 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                             }
 
                             return bitmap;
-                        }
-                    };
-                    imgLoadNotifier = new Handler(){
-                        @Override
-                        public void handleMessage(Message msg){
-                            switch (msg.what){
-                                case 0:
-                                    cholder.detail.setText(c.origin);
-                                    cholder.img.setImageBitmap((Bitmap)msg.obj);
-                                    cholder.img.setVisibility(View.VISIBLE);
-                                    cholder.img.invalidate();
-                                    break;
-                                case 1:
-                                    cholder.detail.setText((String)msg.obj);
-                                    cholder.img.setVisibility(View.INVISIBLE);
-                                    break;
-                            }
                         }
                     };
                     loadThread.start();

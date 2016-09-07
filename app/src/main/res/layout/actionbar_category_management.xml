@@ -11,11 +11,11 @@
         android:layout_marginLeft="8dp"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/actionbar_about_me_backbtn"
+        android:id="@+id/actionbar_category_management_backbtn"
         android:scaleType="centerInside"
         android:src="@drawable/back_arrow"/>
     <TextView
-        android:id="@+id/actionbar_about_me_title"
+        android:id="@+id/actionbar_category_management_title"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,6 +23,6 @@
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textAppearance="?android:textAppearanceLarge"
-        android:text="About Me"/>
+        android:text="Category Management"/>
 
 </RelativeLayout>
