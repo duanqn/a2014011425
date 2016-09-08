@@ -171,29 +171,31 @@ public class NewsTab{
         return -1;
     }
     public boolean makeTabInvisible(int position){
-        if(position >= 0 && position < titleList.size()) {
-            titleListVisible.remove(position);
-            return true;
+        synchronized (this) {
+            if (position >= 0 && position < titleListVisible.size()) {
+                titleListVisible.remove(position);
+                return true;
+            } else
+                return false;
         }
-        else
-            return false;
     }
-    public boolean makeTabVisible(int position_in_invisible){
-        int invisible_count = 0;
-        int visible_ptr = 0;
-        for(int i = 0; i < titleList.size(); ++i){
-            if((visible_ptr >= titleListVisible.size()) || !titleList.get(i).equals(titleListVisible.get(visible_ptr))){
-                // title is invisble
-                ++invisible_count;
-                if(invisible_count == position_in_invisible+1){
-                    titleListVisible.add(visible_ptr, titleList.get(i));
-                    return true;
-                }
+    public synchronized boolean makeTabVisible(int position_in_invisible){
+        synchronized (this) {
+            int invisible_count = 0;
+            int visible_ptr = 0;
+            for (int i = 0; i < titleList.size(); ++i) {
+                if ((visible_ptr >= titleListVisible.size()) || !titleList.get(i).equals(titleListVisible.get(visible_ptr))) {
+                    // title is invisble
+                    ++invisible_count;
+                    if (invisible_count == position_in_invisible + 1) {
+                        titleListVisible.add(visible_ptr, titleList.get(i));
+                        return true;
+                    }
+                } else
+                    ++visible_ptr;
             }
-            else
-                ++visible_ptr;
+            return false;
         }
-        return false;
     }
     public boolean getTab(){
         getResponse();

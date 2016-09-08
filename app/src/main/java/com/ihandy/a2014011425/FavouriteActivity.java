@@ -49,7 +49,7 @@ public class FavouriteActivity extends Activity {
                 cursor.move(1);
             }
         }
-        mAdapter = FavouriteAdapter.getNewInstance(this, mContentItems);
+        mAdapter = FavouriteAdapter.getNewInstance(this, mContentItems, tabName, app.share_tabs);
         list.setAdapter(mAdapter);
     }
 

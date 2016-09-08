@@ -1,6 +1,8 @@
 package com.ihandy.a2014011425;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,16 @@ import java.util.zip.Inflater;
  */
 public class FavouriteAdapter extends BaseAdapter {
     public ArrayList<NewsContent> mContentItems;
+    public ArrayList<String> correspondingTabs;
+    public NewsTab tablist;
     private Context context;
 
-    public static FavouriteAdapter getNewInstance(Context _context, ArrayList<NewsContent> list){
+    public static FavouriteAdapter getNewInstance(Context _context, ArrayList<NewsContent> list, ArrayList<String> tabs, NewsTab newsTab){
         FavouriteAdapter adp = new FavouriteAdapter();
         adp.context = _context;
         adp.mContentItems = list;
+        adp.correspondingTabs = tabs;
+        adp.tablist = newsTab;
         return adp;
     }
 
@@ -82,32 +88,47 @@ public class FavouriteAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.list_item_card_favourite, null);
         }
+        final NewsContent currentContent = mContentItems.get(position);
         TextView textView = (TextView) convertView.findViewById(R.id.favourite_item_title);
-        textView.setText(mContentItems.get(position).title);
+        textView.setText(currentContent.title);
         TextView category = (TextView) convertView.findViewById(R.id.favourite_item_category);
-        category.setText(mContentItems.get(position).category);
+        category.setText(currentContent.category);
         TextView origin = (TextView) convertView.findViewById(R.id.favourite_item_origin);
-        origin.setText(mContentItems.get(position).origin);
+        origin.setText(currentContent.origin);
         ImageView img = (ImageView) convertView.findViewById(R.id.favourite_item_pic);
-        if(mContentItems.get(position).pic!=null){
-            img.setImageBitmap(mContentItems.get(position).pic);
+        if(currentContent.pic!=null){
+            img.setImageBitmap(currentContent.pic);
         }
         final ImageButton favourite = (ImageButton)convertView.findViewById(R.id.favourite_item_favouritebtn);
         favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ImageButton btn = (ImageButton)v;
-                switch (mContentItems.get(position).favourite){
+                switch (currentContent.favourite){
                     case NewsContent.FAVOURITE:
                         btn.setImageDrawable(context.getResources().getDrawable(R.drawable.blue_favorite));
-                        mContentItems.get(position).favourite = NewsContent.NOT_FAVOURITE;
+                        currentContent.favourite = NewsContent.NOT_FAVOURITE;
                         btn.invalidate();
                         break;
                     case NewsContent.NOT_FAVOURITE:
                         btn.setImageDrawable(context.getResources().getDrawable(R.drawable.red_heart));
-                        mContentItems.get(position).favourite = NewsContent.FAVOURITE;
+                        currentContent.favourite = NewsContent.FAVOURITE;
                         btn.invalidate();
                         break;
+                }
+            }
+        });
+        CardView cardView = (CardView)convertView.findViewById(R.id.favourite_item);
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentContent.urlstr!=null){
+                    Intent intent = new Intent();
+                    intent.putExtra("content", currentContent);
+                    int order = tablist.getCodedTitle().indexOf(correspondingTabs.get(position));
+                    intent.putExtra("order", order);
+                    intent.setClass(context, NewsViewActivity.class);
+                    context.startActivity(intent);
                 }
             }
         });

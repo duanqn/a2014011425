@@ -1,6 +1,9 @@
 package com.ihandy.a2014011425;
 
+import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -25,6 +28,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -38,6 +43,7 @@ public class NewsViewActivity extends Activity {
     WebView webView;
     ImageButton button_back;
     ImageButton button_favourite;
+    ImageButton button_share;
     int net_access_count;
     int tab_order;
     boolean favourite_changed;
@@ -149,7 +155,66 @@ public class NewsViewActivity extends Activity {
                 favourite_changed = !favourite_changed;
             }
         });
-
+        button_share = (ImageButton)findViewById(R.id.actionbar_news_view_sharebtn);
+        button_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String []menuList = new String[]{"Share title and URL", "Share picture"};
+                AlertDialog alertDialog = new AlertDialog.Builder(NewsViewActivity.this)
+                        .setTitle("Choose content to share")
+                        .setItems(menuList, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent shareIntent = new Intent();
+                                switch (which){
+                                    case 0:
+                                        shareIntent.setAction(Intent.ACTION_SEND);
+                                        shareIntent.putExtra(Intent.EXTRA_TEXT, NewsViewActivity.this.pageContent.title+"  from "
+                                                +NewsViewActivity.this.pageContent.urlstr);
+                                        shareIntent.setType("text/plain");
+                                        startActivity(Intent.createChooser(shareIntent, "Share to"));
+                                        break;
+                                    case 1:
+                                        if(NewsViewActivity.this.pageContent.pic==null){
+                                            break;
+                                        }
+                                        shareIntent.setAction(Intent.ACTION_SEND);
+                                        File imageDir = getApplicationContext().getFilesDir();
+                                        if(!imageDir.exists()){
+                                            imageDir.mkdirs();
+                                        }
+                                        File tmpImage = new File(imageDir, "tmp.png");
+                                        FileOutputStream os = null;
+                                        try{
+                                            os = new FileOutputStream(tmpImage);
+                                            NewsViewActivity.this.pageContent.pic.compress(Bitmap.CompressFormat.PNG, 100, os);
+                                            os.flush();
+                                        }catch (IOException e){
+                                            Toast.makeText(NewsViewActivity.this, "Unable to share picture", Toast.LENGTH_SHORT).show();
+                                        }
+                                        finally {
+                                            if(os != null){
+                                                try{
+                                                    os.close();
+                                                }catch (IOException e){
+                                                    System.out.println(e);
+                                                }
+                                            }
+                                        }
+                                        if(tmpImage.exists()) {
+                                            Uri imageUri = Uri.fromFile(tmpImage);
+                                            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                                            shareIntent.setType("image/*");
+                                            startActivity(Intent.createChooser(shareIntent, "Share to"));
+                                        }
+                                        break;
+                                }
+                            }
+                        })
+                        .create();
+                alertDialog.show();
+            }
+        });
     }
 
 

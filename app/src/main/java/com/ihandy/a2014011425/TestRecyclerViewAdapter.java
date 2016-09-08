@@ -191,6 +191,7 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                             try {
                                 myFileUrl = new URL(url);
                             } catch (MalformedURLException e) {
+                                System.out.println(e);
                                 e.printStackTrace();
                                 return null;
                             }

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.ihandy.a2014011425.NewsApp;
 import com.ihandy.a2014011425.NewsContent;
@@ -75,6 +76,7 @@ public class RecyclerViewFragment extends Fragment {
             NewsContent content;
             if(obj == null){
                 System.out.println("No object returned!");
+                mhandler.sendEmptyMessage(1);
             }
             else {
                 synchronized (mContentItems) {
@@ -83,6 +85,7 @@ public class RecyclerViewFragment extends Fragment {
                         try {
                             obj = obj.getJSONObject("data");
                             newsList = obj.getJSONArray("news");
+                            boolean update = false;
                             for (int i = 0; i < newsList.length(); ++i) {
                                 news = newsList.getJSONObject(i);
                                 content = new NewsContent();
@@ -109,11 +112,16 @@ public class RecyclerViewFragment extends Fragment {
                                         break;
                                     }
                                 }
-                                if (!crash)
+                                if (!crash) {
                                     mContentItems.add(j, content);
+                                    update = true;
+                                }
                             }
                             writeContent();
-                            mhandler.sendEmptyMessage(0);
+                            if(update)
+                                mhandler.sendEmptyMessage(0);
+                            else
+                                mhandler.sendEmptyMessage(4);
                         } catch (JSONException e) {
                             System.out.println(e);
                         }
@@ -136,7 +144,7 @@ public class RecyclerViewFragment extends Fragment {
                 URL tar = new URL(url);
                 if(tar != null){
                     urlConn = tar.openConnection();
-                    urlConn.setConnectTimeout(3000);
+                    urlConn.setConnectTimeout(1500);
                     adp = new InputStreamReader(urlConn.getInputStream());
                     in = new BufferedReader(adp);
                     String line = null;
@@ -162,6 +170,9 @@ public class RecyclerViewFragment extends Fragment {
                 }
             }
             JSONObject json = null;
+            if(res.isEmpty()){
+                return null;
+            }
             try{
                 System.out.println("Assigning values!");
                 json = new JSONObject(res);
@@ -255,9 +266,10 @@ public class RecyclerViewFragment extends Fragment {
                             cursor.move(1);
                         }
                         writeContent();
-                        mhandler.sendEmptyMessage(0);
+                        mhandler.sendEmptyMessage(2);
                     }
                     else{
+                        mhandler.sendEmptyMessage(3);
                         return;
                     }
                 }
@@ -362,11 +374,27 @@ public class RecyclerViewFragment extends Fragment {
             public void handleMessage(Message msg){
                 switch (msg.what){
                     case 0:
-                        System.out.println("Update message received");
+                        //Toast.makeText(RecyclerViewFragment.this.getContext(), "刷新成功", Toast.LENGTH_SHORT).show();
                         mAdapter.notifyDataSetChanged();
                         mSwipeRefreshWidget.setRefreshing(false);
                         break;
-
+                    case 1:
+                        Toast.makeText(RecyclerViewFragment.this.getContext(), "网络连接超时", Toast.LENGTH_SHORT).show();
+                        mSwipeRefreshWidget.setRefreshing(false);
+                        break;
+                    case 2:
+                        Toast.makeText(RecyclerViewFragment.this.getContext(), "网络不可用，从本地加载", Toast.LENGTH_SHORT).show();
+                        mAdapter.notifyDataSetChanged();
+                        mSwipeRefreshWidget.setRefreshing(false);
+                        break;
+                    case 3:
+                        Toast.makeText(RecyclerViewFragment.this.getContext(), "无法获取新闻列表", Toast.LENGTH_SHORT).show();
+                        mSwipeRefreshWidget.setRefreshing(false);
+                        break;
+                    case 4:
+                        Toast.makeText(RecyclerViewFragment.this.getContext(), "没有更多新闻", Toast.LENGTH_SHORT).show();
+                        mSwipeRefreshWidget.setRefreshing(false);
+                        break;
                 }
             }
         };
