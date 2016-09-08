@@ -383,8 +383,10 @@ public class RecyclerViewFragment extends Fragment {
                         mSwipeRefreshWidget.setRefreshing(false);
                         break;
                     case 2:
-                        Toast.makeText(RecyclerViewFragment.this.getContext(), "网络不可用，从本地加载", Toast.LENGTH_SHORT).show();
-                        mAdapter.notifyDataSetChanged();
+                        if(RecyclerViewFragment.this.getContext() != null) {
+                            Toast.makeText(RecyclerViewFragment.this.getContext(), "网络不可用，从本地加载", Toast.LENGTH_SHORT).show();
+                            mAdapter.notifyDataSetChanged();
+                        }
                         mSwipeRefreshWidget.setRefreshing(false);
                         break;
                     case 3:

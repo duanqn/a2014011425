@@ -7,9 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -178,34 +180,25 @@ public class NewsViewActivity extends Activity {
                                         if(NewsViewActivity.this.pageContent.pic==null){
                                             break;
                                         }
+                                        File filepath = Environment.getExternalStorageDirectory();
+                                        File dir = new File(filepath.getAbsolutePath() + "/News Center/");
+                                        dir.mkdirs();
+                                        File file = new File(dir, "temp.png");
                                         shareIntent.setAction(Intent.ACTION_SEND);
-                                        File imageDir = getApplicationContext().getFilesDir();
-                                        if(!imageDir.exists()){
-                                            imageDir.mkdirs();
-                                        }
-                                        File tmpImage = new File(imageDir, "tmp.png");
+                                        if(file.exists())
+                                            file.delete();
                                         FileOutputStream os = null;
                                         try{
-                                            os = new FileOutputStream(tmpImage);
+                                            os = new FileOutputStream(file);
                                             NewsViewActivity.this.pageContent.pic.compress(Bitmap.CompressFormat.PNG, 100, os);
                                             os.flush();
+                                            os.close();
+                                            Uri uri = Uri.fromFile(file);
+                                            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                                            shareIntent.setType("image/jpeg");
+                                            startActivity(Intent.createChooser(shareIntent, "Share to"));
                                         }catch (IOException e){
                                             Toast.makeText(NewsViewActivity.this, "Unable to share picture", Toast.LENGTH_SHORT).show();
-                                        }
-                                        finally {
-                                            if(os != null){
-                                                try{
-                                                    os.close();
-                                                }catch (IOException e){
-                                                    System.out.println(e);
-                                                }
-                                            }
-                                        }
-                                        if(tmpImage.exists()) {
-                                            Uri imageUri = Uri.fromFile(tmpImage);
-                                            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-                                            shareIntent.setType("image/*");
-                                            startActivity(Intent.createChooser(shareIntent, "Share to"));
                                         }
                                         break;
                                 }
