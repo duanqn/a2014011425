@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -51,6 +53,13 @@ public class FavouriteActivity extends Activity {
         }
         mAdapter = FavouriteAdapter.getNewInstance(this, mContentItems, tabName, app.share_tabs);
         list.setAdapter(mAdapter);
+        ImageButton button_back = (ImageButton)findViewById(R.id.actionbar_favourite_backbtn);
+        button_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override

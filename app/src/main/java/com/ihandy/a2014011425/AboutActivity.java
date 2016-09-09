@@ -26,9 +26,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class AboutActivity extends AppCompatActivity
-         {
-
+public class AboutActivity extends AppCompatActivity {
+    // This class is NOT used in the APP
+    // Only reserved for reference
     Runnable runnable;
     Handler mhandler;
     private Thread thread;

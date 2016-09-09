@@ -124,7 +124,6 @@ public class NewsViewActivity extends Activity {
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Back button clicked", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
